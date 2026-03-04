@@ -15,9 +15,9 @@
     aria-label="Main navigation"
   >
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center gap-8 h-20 overflow-visible">
-        <a href="/" class="flex items-center shrink-0 -ml-[96px]">
-          <img src="/logo.png" alt="asterionsafari" class="h-[145px] w-auto object-contain" />
+      <div class="flex items-center justify-between lg:justify-start gap-8 h-20 overflow-visible">
+        <a href="/" class="flex items-center shrink-0 -ml-[96px] lg:-ml-[96px] max-lg:ml-0">
+          <img src="/logo.png" alt="asterionsafari" class="h-[145px] w-auto object-contain max-lg:h-16" />
         </a>
 
         <div class="hidden lg:flex items-center gap-8">
@@ -47,34 +47,62 @@
         <button
           type="button"
           id="mobile-menu-btn"
-          class="lg:hidden p-2 rounded-md text-dark hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary"
-          aria-label="Toggle menu"
+          class="lg:hidden p-2 rounded-lg text-dark hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
+          aria-label="Open menu"
           aria-expanded="false"
         >
-          <svg id="icon-open" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          <svg id="icon-open" class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
-          <svg id="icon-close" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          <svg id="icon-close" class="w-7 h-7 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
       </div>
     </div>
-
-    <div id="mobile-nav" class="lg:hidden hidden border-t border-gray-100 bg-white">
-      <div class="px-4 py-4 space-y-1">
-        <a href="/" class="block py-2 text-dark hover:text-primary font-medium">Home</a>
-        <div class="py-2">
-          <span class="block py-1 text-dark font-medium">Quad Safari Activities</span>
-          <a href="/day-tour" class="block py-1 pl-4 text-gray-600 hover:text-primary">Day Tour</a>
-          <a href="/evening-tour" class="block py-1 pl-4 text-gray-600 hover:text-primary">Evening Tour</a>
-        </div>
-        <a href="/about" class="block py-2 text-dark hover:text-primary font-medium">About Us</a>
-        <a href="/gallery" class="block py-2 text-dark hover:text-primary font-medium">Gallery</a>
-        <a href="/contact" class="block py-2 text-dark hover:text-primary font-medium">Contact</a>
-      </div>
-    </div>
   </nav>
+
+  <!-- Fullscreen mobile menu overlay -->
+  <div
+    id="mobile-menu-overlay"
+    class="fixed inset-0 z-[60] lg:hidden opacity-0 pointer-events-none transition-opacity duration-300 ease-out"
+    aria-hidden="true"
+  >
+    <div id="mobile-menu-backdrop" class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+    <div
+      id="mobile-menu-panel"
+      class="absolute inset-0 flex flex-col bg-white transform transition-transform duration-300 ease-out translate-y-[-100%]"
+    >
+      <div class="flex items-center justify-between px-4 sm:px-6 h-20 border-b border-gray-100 shrink-0">
+        <a href="/" class="flex items-center" id="mobile-menu-logo-link">
+          <img src="/logo.png" alt="asterionsafari" class="h-12 w-auto object-contain" />
+        </a>
+        <button
+          type="button"
+          id="mobile-menu-close"
+          class="p-2 rounded-full text-dark hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
+          aria-label="Close menu"
+        >
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <nav class="flex-1 flex flex-col justify-center px-6 py-8" aria-label="Mobile navigation">
+        <div class="space-y-1">
+          <a href="/" class="mobile-menu-link block py-4 text-xl font-semibold text-dark hover:text-primary transition-colors">Home</a>
+          <div class="py-2">
+            <span class="block py-3 text-lg font-semibold text-gray-500">Quad Safari Activities</span>
+            <a href="/day-tour" class="mobile-menu-link block py-3 pl-4 text-xl text-dark hover:text-primary transition-colors">Day Tour</a>
+            <a href="/evening-tour" class="mobile-menu-link block py-3 pl-4 text-xl text-dark hover:text-primary transition-colors">Evening Tour</a>
+          </div>
+          <a href="/about" class="mobile-menu-link block py-4 text-xl font-semibold text-dark hover:text-primary transition-colors">About Us</a>
+          <a href="/gallery" class="mobile-menu-link block py-4 text-xl font-semibold text-dark hover:text-primary transition-colors">Gallery</a>
+          <a href="/contact" class="mobile-menu-link block py-4 text-xl font-semibold text-dark hover:text-primary transition-colors">Contact</a>
+        </div>
+      </nav>
+    </div>
+  </div>
 </header>
 
 <script>
@@ -88,17 +116,53 @@
   }
 
   const mobileBtn = document.getElementById('mobile-menu-btn');
-  const mobileNav = document.getElementById('mobile-nav');
+  const overlay = document.getElementById('mobile-menu-overlay');
+  const panel = document.getElementById('mobile-menu-panel');
   const iconOpen = document.getElementById('icon-open');
   const iconClose = document.getElementById('icon-close');
+  const closeBtn = document.getElementById('mobile-menu-close');
 
-  if (mobileBtn && mobileNav && iconOpen && iconClose) {
-    mobileBtn.addEventListener('click', () => {
-      const isOpen = !mobileNav.classList.contains('hidden');
-      mobileNav.classList.toggle('hidden');
-      iconOpen.classList.toggle('hidden', !isOpen);
-      iconClose.classList.toggle('hidden', isOpen);
-      mobileBtn.setAttribute('aria-expanded', String(isOpen));
-    });
+  function openMobileMenu() {
+    if (!overlay || !panel) return;
+    document.body.style.overflow = 'hidden';
+    overlay.classList.remove('opacity-0', 'pointer-events-none');
+    overlay.setAttribute('aria-hidden', 'false');
+    panel.classList.remove('translate-y-[-100%]');
+    panel.classList.add('translate-y-0');
+    iconOpen?.classList.add('hidden');
+    iconClose?.classList.remove('hidden');
+    mobileBtn?.setAttribute('aria-expanded', 'true');
+    mobileBtn?.setAttribute('aria-label', 'Close menu');
   }
+
+  function closeMobileMenu() {
+    if (!overlay || !panel) return;
+    panel.classList.remove('translate-y-0');
+    panel.classList.add('translate-y-[-100%]');
+    overlay.classList.add('opacity-0', 'pointer-events-none');
+    overlay.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    iconOpen?.classList.remove('hidden');
+    iconClose?.classList.add('hidden');
+    mobileBtn?.setAttribute('aria-expanded', 'false');
+    mobileBtn?.setAttribute('aria-label', 'Open menu');
+  }
+
+  mobileBtn?.addEventListener('click', () => {
+    const isOpen = overlay?.getAttribute('aria-hidden') === 'false';
+    if (isOpen) closeMobileMenu();
+    else openMobileMenu();
+  });
+
+  closeBtn?.addEventListener('click', closeMobileMenu);
+
+  overlay?.addEventListener('click', (e) => {
+    if (e.target === document.getElementById('mobile-menu-backdrop')) closeMobileMenu();
+  });
+
+  document.querySelectorAll('.mobile-menu-link').forEach(link => {
+    link.addEventListener('click', closeMobileMenu);
+  });
+
+  document.getElementById('mobile-menu-logo-link')?.addEventListener('click', closeMobileMenu);
 </script>
