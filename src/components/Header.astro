@@ -1,0 +1,104 @@
+---
+---
+
+<header>
+  <div class="bg-dark text-white text-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-6 h-11">
+      <a href="tel:+306984136633" class="hover:text-primary transition-colors">+30 698 413 6633</a>
+      <a href="mailto:asterionquads@gmail.com" class="hover:text-primary transition-colors">asterionquads@gmail.com</a>
+    </div>
+  </div>
+
+  <nav
+    id="main-nav"
+    class="bg-white sticky top-0 z-50 transition-shadow duration-200 overflow-visible"
+    aria-label="Main navigation"
+  >
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center gap-8 h-20 overflow-visible">
+        <a href="/" class="flex items-center shrink-0 -ml-[96px]">
+          <img src="/logo.png" alt="asterionsafari" class="h-[145px] w-auto object-contain" />
+        </a>
+
+        <div class="hidden lg:flex items-center gap-8">
+          <a href="/" class="text-dark hover:text-primary transition-colors font-medium">Home</a>
+          <div class="relative group">
+            <button
+              type="button"
+              class="flex items-center gap-1 text-dark hover:text-primary transition-colors font-medium"
+              aria-expanded="false"
+              aria-haspopup="true"
+            >
+              Quad Safari Activities
+              <svg class="w-4 h-4 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            <div class="absolute top-full left-0 mt-1 w-48 py-2 bg-white rounded-md shadow-lg border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+              <a href="/day-tour" class="block px-4 py-2 text-dark hover:bg-gray-50 hover:text-primary transition-colors">Day Tour</a>
+              <a href="/evening-tour" class="block px-4 py-2 text-dark hover:bg-gray-50 hover:text-primary transition-colors">Evening Tour</a>
+            </div>
+          </div>
+          <a href="/about" class="text-dark hover:text-primary transition-colors font-medium">About Us</a>
+          <a href="/gallery" class="text-dark hover:text-primary transition-colors font-medium">Gallery</a>
+          <a href="/contact" class="text-dark hover:text-primary transition-colors font-medium">Contact</a>
+        </div>
+
+        <button
+          type="button"
+          id="mobile-menu-btn"
+          class="lg:hidden p-2 rounded-md text-dark hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary"
+          aria-label="Toggle menu"
+          aria-expanded="false"
+        >
+          <svg id="icon-open" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+          <svg id="icon-close" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div id="mobile-nav" class="lg:hidden hidden border-t border-gray-100 bg-white">
+      <div class="px-4 py-4 space-y-1">
+        <a href="/" class="block py-2 text-dark hover:text-primary font-medium">Home</a>
+        <div class="py-2">
+          <span class="block py-1 text-dark font-medium">Quad Safari Activities</span>
+          <a href="/day-tour" class="block py-1 pl-4 text-gray-600 hover:text-primary">Day Tour</a>
+          <a href="/evening-tour" class="block py-1 pl-4 text-gray-600 hover:text-primary">Evening Tour</a>
+        </div>
+        <a href="/about" class="block py-2 text-dark hover:text-primary font-medium">About Us</a>
+        <a href="/gallery" class="block py-2 text-dark hover:text-primary font-medium">Gallery</a>
+        <a href="/contact" class="block py-2 text-dark hover:text-primary font-medium">Contact</a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<script>
+  const nav = document.getElementById('main-nav');
+  if (nav) {
+    const onScroll = () => {
+      nav.classList.toggle('shadow-md', window.scrollY > 10);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+
+  const mobileBtn = document.getElementById('mobile-menu-btn');
+  const mobileNav = document.getElementById('mobile-nav');
+  const iconOpen = document.getElementById('icon-open');
+  const iconClose = document.getElementById('icon-close');
+
+  if (mobileBtn && mobileNav && iconOpen && iconClose) {
+    mobileBtn.addEventListener('click', () => {
+      const isOpen = !mobileNav.classList.contains('hidden');
+      mobileNav.classList.toggle('hidden');
+      iconOpen.classList.toggle('hidden', !isOpen);
+      iconClose.classList.toggle('hidden', isOpen);
+      mobileBtn.setAttribute('aria-expanded', String(isOpen));
+    });
+  }
+</script>

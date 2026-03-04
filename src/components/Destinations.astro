@@ -1,0 +1,44 @@
+---
+// Grid: αριστερή στήλη [Potamos Beach, Sfentyli Village], δεξιά [Selinari, Krasi Village]
+const destinations = [
+  { img: 'https://asterionsafari.com/wp-content/uploads/2022/04/IMG_20220812_140856.jpg', caption: 'Potamos Beach' },
+  { img: 'https://asterionsafari.com/wp-content/uploads/2024/03/monastery-of-st-george.jpg', caption: 'Selinari' },
+  { img: 'https://asterionsafari.com/wp-content/uploads/2024/03/3-sfendilli-village-Crete-the-new-Atlantis-of-Aposelemis-lake-min.jpg', caption: 'Sfentyli Village' },
+  { img: 'https://asterionsafari.com/wp-content/uploads/2022/04/Krasi-Village-street.jpg', caption: 'Krasi Village' },
+];
+---
+
+<section class="py-16 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="text-2xl md:text-3xl font-bold text-dark text-center mb-12">
+      Uncover Must-See Destinations!
+    </h2>
+    <div class="grid grid-cols-2 gap-3 md:gap-4">
+      {destinations.map((d) => (
+        <div class="dest-card relative overflow-hidden shadow-md">
+          <img
+            src={d.img}
+            alt={d.caption}
+            class="w-full h-72 object-cover"
+          />
+          <div class="dest-overlay absolute inset-0 bg-gradient-to-t from-black/70 to-transparent pointer-events-none" aria-hidden="true"></div>
+          <p class="dest-caption absolute bottom-2 left-2 text-white font-semibold text-sm pointer-events-none">
+            {d.caption}
+          </p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .dest-overlay,
+  .dest-caption {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  .dest-card:hover .dest-overlay,
+  .dest-card:hover .dest-caption {
+    opacity: 1;
+  }
+</style>
