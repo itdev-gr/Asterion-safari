@@ -3,9 +3,8 @@ export const prerender = false;
 import type { APIRoute } from "astro";
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || import.meta.env.STRIPE_SECRET_KEY);
-
 export const POST: APIRoute = async ({ request }) => {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
   try {
     const body = await request.json();
     const { tour, sharedCount, soloCount, guestName, date } = body;
