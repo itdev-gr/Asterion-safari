@@ -1,24 +1,25 @@
 ---
-// Βίντεο hero: βάλε το αρχείο στο public/photo/ ή όρισε PUBLIC_HERO_VIDEO_URL
-const heroVideoPath = import.meta.env.PUBLIC_HERO_VIDEO_URL || '/photo/aerial-view-of-atv-team-driving-slow-through-the-f-2025-12-17-03-40-13-utc.mov';
 ---
 
 <section class="relative min-h-[92vh] flex items-center justify-center overflow-hidden bg-black" data-hero="video-only">
-  <video
-    id="hero-video"
-    class="absolute inset-0 w-full h-full object-cover z-[1]"
-    style="background: #000"
-    poster=""
-    autoplay
-    muted
-    loop
-    playsinline
-    preload="auto"
-    aria-hidden="true"
-  >
-    <source src={heroVideoPath} type="video/quicktime" />
-    <source src={heroVideoPath} type="video/mp4" />
-  </video>
+  <div class="hero-video-wrapper">
+    <video
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="auto"
+    >
+      <source
+        src="/photo/aerial-view-of-atv-team-driving-slow-through-the-f-2025-12-17-03-40-13-utc.mov"
+        type="video/quicktime"
+      />
+      <source
+        src="/photo/aerial-view-of-atv-team-driving-slow-through-the-f-2025-12-17-03-40-13-utc.mov"
+        type="video/mp4"
+      />
+    </video>
+  </div>
   <div class="absolute inset-0 bg-black/50 z-[2]" aria-hidden="true"></div>
   <div class="relative z-10 text-center px-4">
     <h1 class="text-white text-3xl sm:text-4xl md:text-5xl font-bold mb-8" data-i18n="hero.title">
@@ -33,6 +34,24 @@ const heroVideoPath = import.meta.env.PUBLIC_HERO_VIDEO_URL || '/photo/aerial-vi
     </a>
   </div>
 </section>
+
+<style>
+  .hero-video-wrapper {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 0;
+  }
+
+  .hero-video-wrapper video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+</style>
 
 <div class="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 mt-8 sm:mt-12 relative z-20 bg-transparent shadow-none">
   <div class="flex flex-col sm:flex-row flex-wrap sm:flex-nowrap justify-center items-stretch gap-6 sm:gap-8 md:gap-12 lg:gap-16 xl:gap-24">
@@ -55,10 +74,8 @@ const heroVideoPath = import.meta.env.PUBLIC_HERO_VIDEO_URL || '/photo/aerial-vi
 </div>
 
 <script>
-  const heroVideo = document.getElementById('hero-video');
-  if (heroVideo) {
-    heroVideo.addEventListener('error', () => heroVideo.classList.add('hidden'));
-    heroVideo.addEventListener('loadeddata', () => heroVideo.play().catch(() => {}));
-    heroVideo.addEventListener('canplay', () => heroVideo.play().catch(() => {}));
+  const video = document.querySelector('.hero-video-wrapper video');
+  if (video) {
+    video.play().catch(() => {});
   }
 </script>
