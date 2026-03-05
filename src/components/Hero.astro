@@ -1,5 +1,6 @@
 ---
-const heroVideoPath = '/photo/aerial-view-of-atv-team-driving-slow-through-the-f-2025-12-17-03-40-13-utc.mov';
+// Χρησιμοποίησε PUBLIC_HERO_VIDEO_URL στο Vercel (ή .env) αν το βίντεο είναι σε εξωτερικό URL
+const heroVideoPath = import.meta.env.PUBLIC_HERO_VIDEO_URL || '/photo/hero.mp4';
 const heroPoster = 'https://asterionsafari.com/wp-content/uploads/2022/05/IMG-20230623-WA0002-3-1-768x513.jpg';
 ---
 
@@ -22,7 +23,6 @@ const heroPoster = 'https://asterionsafari.com/wp-content/uploads/2022/05/IMG-20
     preload="auto"
     aria-hidden="true"
   >
-    <source src={heroVideoPath} type="video/quicktime" />
     <source src={heroVideoPath} type="video/mp4" />
   </video>
   <div class="absolute inset-0 bg-black/50 z-[2]" aria-hidden="true"></div>
