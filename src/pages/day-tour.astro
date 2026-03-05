@@ -2,6 +2,15 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import TourPhotoGallery from '../components/TourPhotoGallery.astro';
+
+const tourImages = [
+  { src: 'https://asterionsafari.com/wp-content/uploads/2024/03/IMG-20230623-WA0002-2.jpg', alt: 'Quad Safari Tour' },
+  { src: 'https://asterionsafari.com/wp-content/uploads/2024/03/IMG-20230625-WA0005.jpg', alt: 'Quad Safari' },
+  { src: 'https://asterionsafari.com/wp-content/uploads/2024/03/IMG-20230529-WA0001.jpg', alt: 'Quad Safari' },
+  { src: 'https://asterionsafari.com/wp-content/uploads/2024/03/IMG-20230623-WA0005.jpg', alt: 'Quad Safari' },
+  { src: 'https://asterionsafari.com/wp-content/uploads/2024/03/IMG-20230523-WA0000.jpg', alt: 'Quad Safari' },
+];
 ---
 
 <Layout title="Quad Safari Off-Road Tour with Hotel Transfer - Asterion Safari">
@@ -25,20 +34,7 @@ import Footer from '../components/Footer.astro';
           <p class="text-sm text-gray-400 mb-6">0 (0 Reviews)</p>
 
           <!-- Photo gallery -->
-          <div>
-            <img
-              src="https://asterionsafari.com/wp-content/uploads/2024/03/IMG-20230623-WA0002-2.jpg"
-              alt="Quad Safari Tour"
-              class="w-full h-96 object-cover rounded-xl"
-            />
-            <div class="grid grid-cols-4 gap-2 mt-2">
-              <img src="https://asterionsafari.com/wp-content/uploads/2024/03/IMG-20230625-WA0005.jpg" alt="" class="h-24 w-full object-cover rounded-lg cursor-pointer border-2 border-transparent hover:border-orange-500 transition-colors" />
-              <img src="https://asterionsafari.com/wp-content/uploads/2024/03/IMG-20230529-WA0001.jpg" alt="" class="h-24 w-full object-cover rounded-lg cursor-pointer border-2 border-transparent hover:border-orange-500 transition-colors" />
-              <img src="https://asterionsafari.com/wp-content/uploads/2024/03/IMG-20230623-WA0005.jpg" alt="" class="h-24 w-full object-cover rounded-lg cursor-pointer border-2 border-transparent hover:border-orange-500 transition-colors" />
-              <img src="https://asterionsafari.com/wp-content/uploads/2024/03/IMG-20230523-WA0000.jpg" alt="" class="h-24 w-full object-cover rounded-lg cursor-pointer border-2 border-transparent hover:border-orange-500 transition-colors" />
-            </div>
-            <a href="#" class="inline-block text-orange-500 text-sm font-medium mt-2 hover:text-orange-600">All photos</a>
-          </div>
+          <TourPhotoGallery images={tourImages} />
 
           <!-- Info badges -->
           <div class="flex flex-wrap gap-6 mt-8 mb-8 py-6 border-y border-gray-100">

@@ -1,10 +1,10 @@
 ---
 // Grid: αριστερή στήλη [Potamos Beach, Sfentyli Village], δεξιά [Selinari, Krasi Village]
 const destinations = [
-  { img: 'https://asterionsafari.com/wp-content/uploads/2022/04/IMG_20220812_140856.jpg', caption: 'Potamos Beach' },
-  { img: 'https://asterionsafari.com/wp-content/uploads/2024/03/monastery-of-st-george.jpg', caption: 'Selinari' },
-  { img: 'https://asterionsafari.com/wp-content/uploads/2024/03/3-sfendilli-village-Crete-the-new-Atlantis-of-Aposelemis-lake-min.jpg', caption: 'Sfentyli Village' },
-  { img: 'https://asterionsafari.com/wp-content/uploads/2022/04/Krasi-Village-street.jpg', caption: 'Krasi Village' },
+  { img: 'https://asterionsafari.com/wp-content/uploads/2022/04/IMG_20220812_140856.jpg', caption: 'Potamos Beach', href: '/potamos' },
+  { img: 'https://asterionsafari.com/wp-content/uploads/2024/03/monastery-of-st-george.jpg', caption: 'Selinari', href: '/selinari' },
+  { img: 'https://asterionsafari.com/wp-content/uploads/2024/03/3-sfendilli-village-Crete-the-new-Atlantis-of-Aposelemis-lake-min.jpg', caption: 'Sfentyli Village', href: '/sfentyli' },
+  { img: 'https://asterionsafari.com/wp-content/uploads/2022/04/Krasi-Village-street.jpg', caption: 'Krasi Village', href: '/krasi' },
 ];
 ---
 
@@ -14,19 +14,30 @@ const destinations = [
       Uncover Must-See Destinations!
     </h2>
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-      {destinations.map((d) => (
-        <div class="dest-card relative overflow-hidden shadow-md rounded-xl min-w-0">
-          <img
-            src={d.img}
-            alt={d.caption}
-            class="w-full h-48 sm:h-60 md:h-72 object-cover"
-          />
-          <div class="dest-overlay absolute inset-0 bg-gradient-to-t from-black/70 to-transparent pointer-events-none" aria-hidden="true"></div>
-          <p class="dest-caption absolute bottom-2 left-2 text-white font-semibold text-sm pointer-events-none">
-            {d.caption}
-          </p>
-        </div>
-      ))}
+      {destinations.map((d) => {
+        const cardContent = (
+          <>
+            <img
+              src={d.img}
+              alt={d.caption}
+              class="w-full h-48 sm:h-60 md:h-72 object-cover"
+            />
+            <div class="dest-overlay absolute inset-0 bg-gradient-to-t from-black/70 to-transparent pointer-events-none" aria-hidden="true"></div>
+            <p class="dest-caption absolute bottom-2 left-2 text-white font-semibold text-sm pointer-events-none">
+              {d.caption}
+            </p>
+          </>
+        );
+        return d.href ? (
+          <a href={d.href} class="dest-card relative overflow-hidden shadow-md rounded-none min-w-0 block">
+            {cardContent}
+          </a>
+        ) : (
+          <div class="dest-card relative overflow-hidden shadow-md rounded-none min-w-0">
+            {cardContent}
+          </div>
+        );
+      })}
     </div>
   </div>
 </section>

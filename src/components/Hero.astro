@@ -1,7 +1,30 @@
 ---
+const heroVideoPath = '/photo/aerial-view-of-atv-team-driving-slow-through-the-f-2025-12-17-03-40-13-utc.mov';
+const heroPoster = 'https://asterionsafari.com/wp-content/uploads/2022/05/IMG-20230623-WA0002-3-1-768x513.jpg';
 ---
 
-<section class="relative min-h-[70vh] flex items-center justify-center bg-cover bg-center" style="background-image: url('https://asterionsafari.com/wp-content/uploads/2022/05/IMG-20230623-WA0002-3-1-768x513.jpg')">
+<section class="relative min-h-[92vh] flex items-center justify-center overflow-hidden">
+  <!-- Fallback: εικόνα πάντα ορατή, καλύπτεται από βίντεο όταν παίζει -->
+  <div
+    id="hero-fallback"
+    class="absolute inset-0 w-full h-full bg-cover bg-center"
+    style={`background-image: url('${heroPoster}')`}
+    aria-hidden="true"
+  ></div>
+  <!-- Βίντεο hero: αλλάξτε heroVideoUrl πάνω αν το βίντεο είναι αλλού -->
+  <video
+    id="hero-video"
+    class="absolute inset-0 w-full h-full object-cover"
+    autoplay
+    muted
+    loop
+    playsinline
+    poster={heroPoster}
+    aria-hidden="true"
+  >
+    <source src={heroVideoPath} type="video/quicktime" />
+    <source src={heroVideoPath} type="video/mp4" />
+  </video>
   <div class="absolute inset-0 bg-black/50" aria-hidden="true"></div>
   <div class="relative z-10 text-center px-4">
     <h1 class="text-white text-3xl sm:text-4xl md:text-5xl font-bold mb-8">
@@ -35,3 +58,12 @@
     </div>
   </div>
 </div>
+
+<script>
+  const heroVideo = document.getElementById('hero-video');
+  if (heroVideo) {
+    heroVideo.addEventListener('error', () => {
+      heroVideo.style.display = 'none';
+    });
+  }
+</script>
