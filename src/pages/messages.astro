@@ -102,6 +102,7 @@ import Layout from '../layouts/Layout.astro';
             </div>
           </div>
           <div class="flex items-center gap-2">
+            ${data.source ? `<span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">${escapeHtml(data.source)}</span>` : '<span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">Contact Form</span>'}
             ${isUnread ? '<span class="bg-orange-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full">New</span>' : ""}
             <span class="text-xs text-gray-400">${dateStr}</span>
           </div>

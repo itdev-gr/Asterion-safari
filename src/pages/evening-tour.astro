@@ -234,13 +234,14 @@ const tourImages = [
 
             <!-- Inquiry panel (hidden by default) -->
             <div id="inquiry-panel" class="hidden">
-              <input type="text" placeholder="Name *" class="border border-gray-200 rounded-xl px-4 py-3 w-full text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-orange-400" />
-              <input type="email" placeholder="Email *" class="border border-gray-200 rounded-xl px-4 py-3 w-full text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-orange-400" />
-              <input type="text" placeholder="Phone *" class="border border-gray-200 rounded-xl px-4 py-3 w-full text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-orange-400" />
-              <textarea placeholder="Note *" rows="4" class="border border-gray-200 rounded-xl px-4 py-3 w-full text-sm mb-4 resize-y focus:outline-none focus:ring-2 focus:ring-orange-400"></textarea>
-              <button type="button" class="inquiry-send-btn bg-orange-500 hover:bg-orange-600 text-white font-semibold w-full py-3 rounded-full transition-colors">
+              <input id="inquiry-name" type="text" placeholder="Name *" class="border border-gray-200 rounded-xl px-4 py-3 w-full text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-orange-400" />
+              <input id="inquiry-email" type="email" placeholder="Email *" class="border border-gray-200 rounded-xl px-4 py-3 w-full text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-orange-400" />
+              <input id="inquiry-phone" type="text" placeholder="Phone *" class="border border-gray-200 rounded-xl px-4 py-3 w-full text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-orange-400" />
+              <textarea id="inquiry-note" placeholder="Note *" rows="4" class="border border-gray-200 rounded-xl px-4 py-3 w-full text-sm mb-4 resize-y focus:outline-none focus:ring-2 focus:ring-orange-400"></textarea>
+              <button type="button" id="inquiry-send-btn" class="inquiry-send-btn bg-orange-500 hover:bg-orange-600 text-white font-semibold w-full py-3 rounded-full transition-colors">
                 Send
               </button>
+              <p id="inquiry-status" class="mt-3 text-sm hidden"></p>
             </div>
           </div>
 
@@ -473,6 +474,55 @@ const tourImages = [
   document.addEventListener('click', (e) => {
     if (bookingDateBtn && bookingCalDropdown && !bookingDateBtn.contains(e.target) && !bookingCalDropdown.contains(e.target)) {
       bookingCalDropdown.classList.add('hidden');
+    }
+  });
+
+  // Inquiry form -> Firestore
+  import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+  import { db } from "../lib/firebase";
+
+  const inquirySendBtn = document.getElementById('inquiry-send-btn');
+  const inquiryStatus = document.getElementById('inquiry-status')!;
+
+  inquirySendBtn?.addEventListener('click', async () => {
+    const name = (document.getElementById('inquiry-name') as HTMLInputElement).value.trim();
+    const email = (document.getElementById('inquiry-email') as HTMLInputElement).value.trim();
+    const phone = (document.getElementById('inquiry-phone') as HTMLInputElement).value.trim();
+    const note = (document.getElementById('inquiry-note') as HTMLTextAreaElement).value.trim();
+
+    if (!name || !email || !phone) {
+      inquiryStatus.textContent = "Please fill in all required fields.";
+      inquiryStatus.className = "mt-3 text-sm text-red-600";
+      return;
+    }
+
+    inquirySendBtn.textContent = "Sending...";
+    (inquirySendBtn as HTMLButtonElement).disabled = true;
+    inquiryStatus.classList.add("hidden");
+
+    try {
+      await addDoc(collection(db, "messages"), {
+        name,
+        email,
+        phone,
+        message: note,
+        source: "Evening Tour Inquiry",
+        read: false,
+        createdAt: serverTimestamp(),
+      });
+
+      inquiryStatus.textContent = "Inquiry sent successfully!";
+      inquiryStatus.className = "mt-3 text-sm text-green-600";
+      (document.getElementById('inquiry-name') as HTMLInputElement).value = "";
+      (document.getElementById('inquiry-email') as HTMLInputElement).value = "";
+      (document.getElementById('inquiry-phone') as HTMLInputElement).value = "";
+      (document.getElementById('inquiry-note') as HTMLTextAreaElement).value = "";
+    } catch (err) {
+      inquiryStatus.textContent = "Failed to send. Please try again.";
+      inquiryStatus.className = "mt-3 text-sm text-red-600";
+    } finally {
+      inquirySendBtn.textContent = "Send";
+      (inquirySendBtn as HTMLButtonElement).disabled = false;
     }
   });
 </script>
