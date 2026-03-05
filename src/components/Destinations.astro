@@ -1,16 +1,16 @@
 ---
 // Grid: αριστερή στήλη [Potamos Beach, Sfentyli Village], δεξιά [Selinari, Krasi Village]
 const destinations = [
-  { img: 'https://asterionsafari.com/wp-content/uploads/2022/04/IMG_20220812_140856.jpg', caption: 'Potamos Beach', href: '/potamos' },
-  { img: 'https://asterionsafari.com/wp-content/uploads/2024/03/monastery-of-st-george.jpg', caption: 'Selinari', href: '/selinari' },
-  { img: 'https://asterionsafari.com/wp-content/uploads/2024/03/3-sfendilli-village-Crete-the-new-Atlantis-of-Aposelemis-lake-min.jpg', caption: 'Sfentyli Village', href: '/sfentyli' },
-  { img: 'https://asterionsafari.com/wp-content/uploads/2022/04/Krasi-Village-street.jpg', caption: 'Krasi Village', href: '/krasi' },
+  { img: 'https://asterionsafari.com/wp-content/uploads/2022/04/IMG_20220812_140856.jpg', caption: 'Potamos Beach', i18nKey: 'destinations.captionPotamos', href: '/potamos' },
+  { img: 'https://asterionsafari.com/wp-content/uploads/2024/03/monastery-of-st-george.jpg', caption: 'Selinari', i18nKey: 'destinations.captionSelinari', href: '/selinari' },
+  { img: 'https://asterionsafari.com/wp-content/uploads/2024/03/3-sfendilli-village-Crete-the-new-Atlantis-of-Aposelemis-lake-min.jpg', caption: 'Sfentyli Village', i18nKey: 'destinations.captionSfentyli', href: '/sfentyli' },
+  { img: 'https://asterionsafari.com/wp-content/uploads/2022/04/Krasi-Village-street.jpg', caption: 'Krasi Village', i18nKey: 'destinations.captionKrasi', href: '/krasi' },
 ];
 ---
 
 <section class="py-10 sm:py-16 bg-white">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <h2 class="text-xl sm:text-2xl md:text-3xl font-bold text-dark text-center mb-8 sm:mb-12">
+    <h2 class="text-xl sm:text-2xl md:text-3xl font-bold text-dark text-center mb-8 sm:mb-12" data-i18n="destinations.sectionTitle">
       Uncover Must-See Destinations!
     </h2>
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
@@ -23,7 +23,7 @@ const destinations = [
               class="w-full h-48 sm:h-60 md:h-72 object-cover"
             />
             <div class="dest-overlay absolute inset-0 bg-gradient-to-t from-black/70 to-transparent pointer-events-none" aria-hidden="true"></div>
-            <p class="dest-caption absolute bottom-2 left-2 text-white font-semibold text-sm pointer-events-none">
+            <p class="dest-caption absolute bottom-2 left-2 text-white font-semibold text-sm pointer-events-none" data-i18n={d.i18nKey}>
               {d.caption}
             </p>
           </>

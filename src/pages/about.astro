@@ -23,19 +23,19 @@ import Footer from '../components/Footer.astro';
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
           <!-- Left: Mission text -->
           <div>
-            <p class="text-gray-400 uppercase tracking-widest text-sm mb-3">
+            <p class="text-gray-400 uppercase tracking-widest text-sm mb-3" data-i18n="aboutPage.learnAboutUs">
               Learn a bit about who we are
             </p>
-            <h2 class="text-3xl font-bold text-gray-900 mb-10">Our Mission</h2>
+            <h2 class="text-3xl font-bold text-gray-900 mb-10" data-i18n="aboutPage.ourMission">Our Mission</h2>
 
-            <p class="text-gray-600 leading-relaxed mb-6">
+            <p class="text-gray-600 leading-relaxed mb-6" data-i18n="aboutPage.missionPara1">
               "Asterion Safari" is a business created by two brothers, founded in 2021
               with the aim of offering its customers a high level of services. It all
               started with our vision to be able to show you the beauties and special
               landscapes of our island, while exploring the Cretan customs and traditions.
             </p>
 
-            <p class="text-gray-600 leading-relaxed">
+            <p class="text-gray-600 leading-relaxed" data-i18n="aboutPage.missionPara2">
               We started by organizing guided Quad Safari excursions in small groups with
               a choice of driver-guide in the language of your choice, choosing brand name
               vehicles, so that our customers can experience the adventure combining comfort
@@ -75,7 +75,7 @@ import Footer from '../components/Footer.astro';
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/>
               </svg>
               <div class="min-w-0 flex-1">
-                <p class="text-xs text-gray-500 mb-0.5">Destination</p>
+                <p class="text-xs text-gray-500 mb-0.5" data-i18n="aboutPage.destination">Destination</p>
                 <p class="text-sm font-semibold text-orange-500 truncate" id="dest-label">Piskopiano</p>
               </div>
               <div id="dest-dropdown" class="hidden absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-50 w-64 py-2">
@@ -97,7 +97,7 @@ import Footer from '../components/Footer.astro';
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/>
               </svg>
               <div class="min-w-0 flex-1">
-                <p class="text-xs text-gray-500 mb-0.5">From - To</p>
+                <p class="text-xs text-gray-500 mb-0.5" data-i18n="aboutPage.fromTo">From - To</p>
                 <p class="text-sm font-semibold text-orange-500 truncate" id="date-label">mm/dd/yyyy - mm/dd/yyyy</p>
               </div>
               <div id="cal-dropdown" class="hidden absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-50 p-4" style="width:580px">
@@ -106,8 +106,8 @@ import Footer from '../components/Footer.astro';
             </div>
             <div class="p-5 flex items-center gap-3 cursor-pointer relative hover:bg-gray-50/50 transition-colors" id="adv-btn">
               <div>
-                <p class="text-xs text-gray-500 mb-0.5">Advance</p>
-                <p class="text-sm font-semibold text-orange-500">More ▼</p>
+                <p class="text-xs text-gray-500 mb-0.5" data-i18n="aboutPage.advance">Advance</p>
+                <p class="text-sm font-semibold text-orange-500" data-i18n="aboutPage.more">More ▼</p>
               </div>
               <div id="adv-dropdown" class="hidden absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-50 p-6 w-80">
                 <p class="font-bold text-sm mb-4">Filter Price</p>
@@ -121,7 +121,7 @@ import Footer from '../components/Footer.astro';
               </div>
             </div>
             <div class="p-3 flex items-center justify-center rounded-r-2xl">
-              <button type="button" class="bg-orange-500 hover:bg-orange-600 text-white font-semibold text-sm px-8 py-3.5 rounded-xl w-full max-w-[140px] transition-colors shadow-sm">Search</button>
+              <button type="button" class="bg-orange-500 hover:bg-orange-600 text-white font-semibold text-sm px-8 py-3.5 rounded-xl w-full max-w-[140px] transition-colors shadow-sm" data-i18n="aboutPage.search">Search</button>
             </div>
           </div>
         </div>

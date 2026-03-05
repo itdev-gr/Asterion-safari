@@ -5,9 +5,10 @@ interface Props {
 
 const { title = 'Asterion Safari' } = Astro.props;
 import '../styles/global.css';
+import { translations } from '../i18n/translations.js';
 ---
 
-<html lang="en">
+<html lang="en" id="html-lang-root">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -24,6 +25,88 @@ import '../styles/global.css';
   </head>
   <body class="font-sans antialiased" style="font-family: 'Poppins', sans-serif">
     <slot />
+    <script define:vars={{ translations }}>
+      (function () {
+        const STORAGE_KEY = 'asterion-lang';
+        const get = (obj, path) => path.split('.').reduce((o, k) => (o && o[k] !== undefined ? o[k] : null), obj);
+        function getLang() {
+          try {
+            const L = localStorage.getItem(STORAGE_KEY);
+            if (L === 'el' || L === 'en') return L;
+          } catch (_) {}
+          return 'en';
+        }
+        function setLang(lang) {
+          try {
+            localStorage.setItem(STORAGE_KEY, lang);
+          } catch (_) {}
+          if (document.documentElement) document.documentElement.lang = lang;
+          applyTranslations(lang);
+          updateToggleButtons(lang);
+        }
+        function getMetaTitleKey() {
+          const path = typeof window !== 'undefined' ? window.location.pathname : '';
+          if (path.includes('day-tour')) return 'meta.dayTour';
+          if (path.includes('evening-tour')) return 'meta.eveningTour';
+          if (path.includes('about')) return 'meta.about';
+          if (path.includes('gallery')) return 'meta.gallery';
+          if (path.includes('contact')) return 'meta.contact';
+          if (path.includes('krasi')) return 'meta.krasi';
+          if (path.includes('potamos')) return 'meta.potamos';
+          if (path.includes('selinari')) return 'meta.selinari';
+          if (path.includes('sfentyli')) return 'meta.sfentyli';
+          return 'meta.home';
+        }
+        function applyTranslations(lang) {
+          const t = translations && translations[lang];
+          if (!t) return;
+          document.querySelectorAll('[data-i18n]').forEach((el) => {
+            const key = el.getAttribute('data-i18n');
+            const val = key ? get(t, key) : null;
+            if (val != null) el.textContent = val;
+          });
+          document.querySelectorAll('[data-i18n-placeholder]').forEach((el) => {
+            const key = el.getAttribute('data-i18n-placeholder');
+            const val = key ? get(t, key) : null;
+            if (val != null && 'placeholder' in el) el.placeholder = val;
+          });
+          document.querySelectorAll('[data-i18n-aria-label]').forEach((el) => {
+            const key = el.getAttribute('data-i18n-aria-label');
+            const val = key ? get(t, key) : null;
+            if (val != null) el.setAttribute('aria-label', val);
+          });
+          const titleKey = getMetaTitleKey();
+          const metaTitle = titleKey ? get(t, titleKey) : null;
+          if (metaTitle) document.title = metaTitle;
+        }
+        function updateToggleButtons(lang) {
+          document.querySelectorAll('.lang-option').forEach((btn) => {
+            const isActive = btn.getAttribute('data-lang') === lang;
+            btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+            btn.classList.toggle('text-primary', isActive);
+            btn.classList.toggle('bg-white', isActive);
+            btn.classList.toggle('shadow-sm', isActive);
+            btn.classList.toggle('text-gray-600', !isActive);
+          });
+        }
+        const lang = getLang();
+        if (document.documentElement) document.documentElement.lang = lang;
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', () => { applyTranslations(lang); updateToggleButtons(lang); });
+        } else {
+          applyTranslations(lang);
+          updateToggleButtons(lang);
+        }
+        document.addEventListener('click', (e) => {
+          const btn = e.target.closest('[data-lang]');
+          if (btn && (btn.getAttribute('data-lang') === 'en' || btn.getAttribute('data-lang') === 'el')) {
+            setLang(btn.getAttribute('data-lang'));
+          }
+        });
+        window.__setLang = setLang;
+        window.__getLang = getLang;
+      })();
+    </script>
   </body>
 </html>
 

@@ -1,4 +1,5 @@
 ---
+import LanguageToggle from './LanguageToggle.astro';
 ---
 
 <header>
@@ -21,7 +22,7 @@
         </a>
 
         <div class="hidden lg:flex flex-1 justify-center items-center gap-8">
-          <a href="/" class="text-dark hover:text-primary transition-colors font-medium">Home</a>
+          <a href="/" class="text-dark hover:text-primary transition-colors font-medium" data-i18n="nav.home">Home</a>
           <div class="relative group">
             <button
               type="button"
@@ -29,19 +30,20 @@
               aria-expanded="false"
               aria-haspopup="true"
             >
-              Quad Safari Activities
+              <span data-i18n="nav.activities">Quad Safari Activities</span>
               <svg class="w-4 h-4 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
               </svg>
             </button>
             <div class="absolute top-full left-0 mt-1 w-48 py-2 bg-white rounded-md shadow-lg border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-              <a href="/day-tour" class="block px-4 py-2 text-dark hover:bg-gray-50 hover:text-primary transition-colors">Day Tour</a>
-              <a href="/evening-tour" class="block px-4 py-2 text-dark hover:bg-gray-50 hover:text-primary transition-colors">Evening Tour</a>
+              <a href="/day-tour" class="block px-4 py-2 text-dark hover:bg-gray-50 hover:text-primary transition-colors" data-i18n="nav.dayTour">Day Tour</a>
+              <a href="/evening-tour" class="block px-4 py-2 text-dark hover:bg-gray-50 hover:text-primary transition-colors" data-i18n="nav.eveningTour">Evening Tour</a>
             </div>
           </div>
-          <a href="/about" class="text-dark hover:text-primary transition-colors font-medium">About Us</a>
-          <a href="/gallery" class="text-dark hover:text-primary transition-colors font-medium">Gallery</a>
-          <a href="/contact" class="text-dark hover:text-primary transition-colors font-medium">Contact</a>
+          <a href="/about" class="text-dark hover:text-primary transition-colors font-medium" data-i18n="nav.about">About Us</a>
+          <a href="/gallery" class="text-dark hover:text-primary transition-colors font-medium" data-i18n="nav.gallery">Gallery</a>
+          <a href="/contact" class="text-dark hover:text-primary transition-colors font-medium" data-i18n="nav.contact">Contact</a>
+          <LanguageToggle />
         </div>
 
         <button
@@ -81,7 +83,11 @@
       </div>
       <nav class="flex-1 flex flex-col justify-start px-6 pt-4 pb-8 overflow-y-auto" aria-label="Mobile navigation">
         <div class="space-y-1">
-          <a href="/" class="mobile-menu-link block py-4 text-xl font-semibold text-dark hover:text-primary transition-colors">Home</a>
+          <div class="flex items-center justify-between gap-4 py-3 border-b border-gray-100">
+            <span class="text-sm text-gray-500" data-i18n="language">Language</span>
+            <LanguageToggle />
+          </div>
+          <a href="/" class="mobile-menu-link block py-4 text-xl font-semibold text-dark hover:text-primary transition-colors" data-i18n="nav.home">Home</a>
           <div class="py-2" id="mobile-activities-wrap">
             <button
               type="button"
@@ -90,21 +96,21 @@
               aria-expanded="false"
               aria-controls="mobile-activities-submenu"
             >
-              <span>Quad Safari Activities</span>
+              <span data-i18n="nav.activities">Quad Safari Activities</span>
               <svg id="mobile-activities-chevron" class="w-5 h-5 shrink-0 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
               </svg>
             </button>
             <div id="mobile-activities-submenu" class="grid max-h-0 overflow-hidden opacity-0 transition-all duration-200 ease-out grid-rows-[0fr]" aria-hidden="true">
               <div class="min-h-0">
-                <a href="/day-tour" class="mobile-menu-link block py-3 pl-4 text-xl text-dark hover:text-primary transition-colors">Day Tour</a>
-                <a href="/evening-tour" class="mobile-menu-link block py-3 pl-4 text-xl text-dark hover:text-primary transition-colors">Evening Tour</a>
+                <a href="/day-tour" class="mobile-menu-link block py-3 pl-4 text-xl text-dark hover:text-primary transition-colors" data-i18n="nav.dayTour">Day Tour</a>
+                <a href="/evening-tour" class="mobile-menu-link block py-3 pl-4 text-xl text-dark hover:text-primary transition-colors" data-i18n="nav.eveningTour">Evening Tour</a>
               </div>
             </div>
           </div>
-          <a href="/about" class="mobile-menu-link block py-4 text-xl font-semibold text-dark hover:text-primary transition-colors">About Us</a>
-          <a href="/gallery" class="mobile-menu-link block py-4 text-xl font-semibold text-dark hover:text-primary transition-colors">Gallery</a>
-          <a href="/contact" class="mobile-menu-link block py-4 text-xl font-semibold text-dark hover:text-primary transition-colors">Contact</a>
+          <a href="/about" class="mobile-menu-link block py-4 text-xl font-semibold text-dark hover:text-primary transition-colors" data-i18n="nav.about">About Us</a>
+          <a href="/gallery" class="mobile-menu-link block py-4 text-xl font-semibold text-dark hover:text-primary transition-colors" data-i18n="nav.gallery">Gallery</a>
+          <a href="/contact" class="mobile-menu-link block py-4 text-xl font-semibold text-dark hover:text-primary transition-colors" data-i18n="nav.contact">Contact</a>
         </div>
       </nav>
     </div>
