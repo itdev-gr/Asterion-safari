@@ -1,18 +1,9 @@
 ---
 // Χρησιμοποίησε PUBLIC_HERO_VIDEO_URL στο Vercel (ή .env) αν το βίντεο είναι σε εξωτερικό URL
 const heroVideoPath = import.meta.env.PUBLIC_HERO_VIDEO_URL || '/photo/hero.mp4';
-const heroPoster = 'https://asterionsafari.com/wp-content/uploads/2022/05/IMG-20230623-WA0002-3-1-768x513.jpg';
 ---
 
 <section class="relative min-h-[92vh] flex items-center justify-center overflow-hidden bg-black">
-  <!-- Fallback: εικόνα μόνο όταν το βίντεο αποτύχει -->
-  <div
-    id="hero-fallback"
-    class="absolute inset-0 w-full h-full bg-cover bg-center z-0 hidden"
-    style={`background-image: url('${heroPoster}')`}
-    aria-hidden="true"
-  ></div>
-  <!-- Βίντεο hero: στη θέση της εικόνας φαίνεται το βίντεο (χωρίς poster) -->
   <video
     id="hero-video"
     class="absolute inset-0 w-full h-full object-cover z-[1]"
@@ -62,12 +53,8 @@ const heroPoster = 'https://asterionsafari.com/wp-content/uploads/2022/05/IMG-20
 
 <script>
   const heroVideo = document.getElementById('hero-video');
-  const heroFallback = document.getElementById('hero-fallback');
-  if (heroVideo && heroFallback) {
-    heroVideo.addEventListener('error', () => {
-      heroVideo.classList.add('hidden');
-      heroFallback.classList.remove('hidden');
-    });
+  if (heroVideo) {
+    heroVideo.addEventListener('error', () => heroVideo.classList.add('hidden'));
     heroVideo.addEventListener('loadeddata', () => heroVideo.play().catch(() => {}));
     heroVideo.addEventListener('canplay', () => heroVideo.play().catch(() => {}));
   }
