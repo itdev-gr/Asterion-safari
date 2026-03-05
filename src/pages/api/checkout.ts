@@ -21,7 +21,7 @@ export const POST: APIRoute = async ({ request }) => {
           currency: "eur",
           product_data: {
             name: `${tourName} - Shared Quad Bike`,
-            description: "Booking for two persons, one quad bike for shared use.",
+            description: `Guest: ${guestName} | Date: ${date} | Booking for two persons, one quad bike for shared use.`,
           },
           unit_amount: pricePerUnit,
         },
@@ -35,7 +35,7 @@ export const POST: APIRoute = async ({ request }) => {
           currency: "eur",
           product_data: {
             name: `${tourName} - Solo Riding`,
-            description: "Booking for one person, one quad bike for individual use.",
+            description: `Guest: ${guestName} | Date: ${date} | Booking for one person, one quad bike for individual use.`,
           },
           unit_amount: pricePerUnit,
         },
@@ -55,6 +55,10 @@ export const POST: APIRoute = async ({ request }) => {
       payment_method_types: ["card"],
       line_items: lineItems,
       mode: "payment",
+      customer_creation: "always",
+      payment_intent_data: {
+        description: `${tourName} booking for ${guestName} on ${date}`,
+      },
       success_url: `${origin}/booking-success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/${tour === "evening" ? "evening-tour" : "day-tour"}`,
       metadata: {
