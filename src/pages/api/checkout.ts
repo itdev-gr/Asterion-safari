@@ -4,7 +4,14 @@ import type { APIRoute } from "astro";
 import Stripe from "stripe";
 
 export const POST: APIRoute = async ({ request }) => {
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+  const secretKey = process.env.STRIPE_SECRET_KEY;
+  if (!secretKey) {
+    return new Response(
+      JSON.stringify({ error: "Stripe secret key is not configured" }),
+      { status: 500 }
+    );
+  }
+  const stripe = new Stripe(secretKey);
   try {
     const body = await request.json();
     const { tour, sharedCount, soloCount, guestName, date } = body;
