@@ -1,6 +1,6 @@
 ---
-// Χρησιμοποίησε PUBLIC_HERO_VIDEO_URL στο Vercel (ή .env) αν το βίντεο είναι σε εξωτερικό URL
-const heroVideoPath = import.meta.env.PUBLIC_HERO_VIDEO_URL || '/photo/hero.mp4';
+// Βίντεο hero: βάλε το αρχείο στο public/photo/ ή όρισε PUBLIC_HERO_VIDEO_URL
+const heroVideoPath = import.meta.env.PUBLIC_HERO_VIDEO_URL || '/photo/aerial-view-of-atv-team-driving-slow-through-the-f-2025-12-17-03-40-13-utc.mov';
 ---
 
 <section class="relative min-h-[92vh] flex items-center justify-center overflow-hidden bg-black" data-hero="video-only">
@@ -16,6 +16,7 @@ const heroVideoPath = import.meta.env.PUBLIC_HERO_VIDEO_URL || '/photo/hero.mp4'
     preload="auto"
     aria-hidden="true"
   >
+    <source src={heroVideoPath} type="video/quicktime" />
     <source src={heroVideoPath} type="video/mp4" />
   </video>
   <div class="absolute inset-0 bg-black/50 z-[2]" aria-hidden="true"></div>
