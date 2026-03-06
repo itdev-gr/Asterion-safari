@@ -42,6 +42,7 @@ export const translations = {
     },
     pickups: {
       sectionTitle: 'Pick up areas',
+      subtitle: 'We pick you up from these areas. Select your location when booking.',
     },
     tourDescriptions: {
       dayTourActivityTitle: 'Day Tour Activity',
@@ -306,6 +307,7 @@ export const translations = {
     },
     pickups: {
       sectionTitle: 'Σημεία παραλαβής',
+      subtitle: 'Σας παραλαμβάνουμε από αυτές τις περιοχές. Επιλέξτε το σημείο σας κατά την κράτηση.',
     },
     tourDescriptions: {
       dayTourActivityTitle: 'Πρωινή δραστηριότητα',
