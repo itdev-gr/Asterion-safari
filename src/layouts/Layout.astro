@@ -12,8 +12,9 @@ import { translations } from '../i18n/translations.js';
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/png" href="/favicon.png" />
-    <link rel="apple-touch-icon" href="/favicon.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/photo/Asterion%20Safari-01.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/photo/Asterion%20Safari-01.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/photo/Asterion%20Safari-01.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -21,7 +22,14 @@ import { translations } from '../i18n/translations.js';
       rel="stylesheet"
     />
     <title>{title}</title>
-    <script src="https://cbl.link/b/3uzEUkg.js" async></script>
+    <script is:inline>
+      (function() {
+        var script = document.createElement('script');
+        script.src = 'https://cbl.link/b/UdZEmqh.js';
+        script.async = true;
+        document.head.appendChild(script);
+      })();
+    </script>
   </head>
   <body class="font-sans antialiased" style="font-family: 'Poppins', sans-serif">
     <slot />
@@ -51,6 +59,7 @@ import { translations } from '../i18n/translations.js';
           if (path.includes('about')) return 'meta.about';
           if (path.includes('gallery')) return 'meta.gallery';
           if (path.includes('contact')) return 'meta.contact';
+          if (path.includes('privacy')) return 'meta.privacy';
           if (path.includes('krasi')) return 'meta.krasi';
           if (path.includes('potamos')) return 'meta.potamos';
           if (path.includes('selinari')) return 'meta.selinari';
