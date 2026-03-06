@@ -2,8 +2,8 @@
 import LanguageToggle from './LanguageToggle.astro';
 ---
 
-<header class="sticky top-0 z-50">
-  <div class="bg-dark text-white text-sm sm:text-base">
+<header id="main-header" class="sticky top-0 z-50">
+  <div id="top-bar" class="text-white text-sm sm:text-base transition-all duration-200" style="background-color: transparent;">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center gap-6 h-12 sm:h-14">
       <a href="tel:+306984136633" class="hover:text-primary transition-colors">+30 698 413 6633</a>
       <a href="mailto:asterionquads@gmail.com" class="hover:text-primary transition-colors">asterionquads@gmail.com</a>
@@ -133,6 +133,14 @@ import LanguageToggle from './LanguageToggle.astro';
 </header>
 
 <style>
+  /* Top bar: transparent at top, dark on scroll */
+  :global(#main-header:not(.is-scrolled) #top-bar) {
+    background-color: transparent !important;
+  }
+  :global(#main-header.is-scrolled #top-bar) {
+    background-color: var(--color-dark) !important;
+  }
+
   /* Top of page: white text; after scroll: dark text (sticky header) */
   :global(#main-nav:not(.is-scrolled) .nav-desktop-link) {
     color: white;
@@ -192,11 +200,13 @@ import LanguageToggle from './LanguageToggle.astro';
 </style>
 
 <script>
+  const header = document.getElementById('main-header');
   const nav = document.getElementById('main-nav');
-  if (nav) {
-    const SCROLL_THRESHOLD = 60;
-    const onScroll = () => {
-      const scrolled = window.scrollY > SCROLL_THRESHOLD;
+  const SCROLL_THRESHOLD = 60;
+  const onScroll = () => {
+    const scrolled = window.scrollY > SCROLL_THRESHOLD;
+    if (header) header.classList.toggle('is-scrolled', scrolled);
+    if (nav) {
       if (scrolled) {
         nav.style.backgroundColor = '';
         nav.classList.add('bg-white', 'shadow-md', 'is-scrolled');
@@ -204,10 +214,10 @@ import LanguageToggle from './LanguageToggle.astro';
         nav.style.backgroundColor = 'transparent';
         nav.classList.remove('bg-white', 'shadow-md', 'is-scrolled');
       }
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-  }
+    }
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
 
   // Move mobile menu overlay to end of body so it's always on top (fixes About & other pages)
   const overlayEl = document.getElementById('mobile-menu-overlay');
