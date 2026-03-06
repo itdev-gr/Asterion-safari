@@ -179,7 +179,7 @@ const tourImages = [
             <!-- Date (click to open calendar) -->
             <div class="border border-gray-200 rounded-xl p-3 mb-3 relative cursor-pointer select-none" id="booking-date-btn" role="button" tabindex="0">
               <p class="text-xs text-gray-400 mb-1">Date</p>
-              <p class="text-sm font-semibold text-orange-500 flex items-center justify-between"><span id="selected-date">03/05/2026 - 03/05/2026</span> <span class="text-gray-400 ml-1">▾</span></p>
+              <p class="text-sm font-semibold text-orange-500 flex items-center justify-between"><span id="selected-date">Select a date</span> <span class="text-gray-400 ml-1">▾</span></p>
               <div id="booking-cal-dropdown" class="hidden absolute left-0 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-xl z-[100] p-4" style="min-width: 320px;">
                 <div class="grid grid-cols-2 gap-4" id="booking-calendar-container"></div>
               </div>
@@ -443,7 +443,6 @@ const tourImages = [
   const bookingCalDropdown = document.getElementById('booking-cal-dropdown');
   const dateLabel = document.getElementById('selected-date');
   let calStartDate = null;
-  let calEndDate = null;
   let calMonth = new Date().getMonth();
   let calYear = new Date().getFullYear();
   const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -470,10 +469,9 @@ const tourImages = [
       for (let d = 1; d <= daysInMonth; d++) {
         const dateStr = formatDate(d, m, y);
         const isStart = calStartDate === dateStr;
-        const isEnd = calEndDate === dateStr;
         const isToday = d === new Date().getDate() && m === new Date().getMonth() && y === new Date().getFullYear();
         let cls = 'text-center text-sm py-1.5 rounded cursor-pointer hover:bg-orange-100 transition-colors';
-        if (isStart || isEnd) cls += ' bg-orange-500 text-white hover:bg-orange-600';
+        if (isStart) cls += ' bg-orange-500 text-white hover:bg-orange-600';
         else if (isToday) cls += ' border border-orange-400';
         html += '<div class="booking-cal-day ' + cls + '" data-date="' + dateStr + '">' + d + '</div>';
       }
@@ -484,15 +482,9 @@ const tourImages = [
       el.addEventListener('click', (e) => {
         e.stopPropagation();
         const dateStr = e.currentTarget.dataset.date;
-        if (!calStartDate || (calStartDate && calEndDate)) {
-          calStartDate = dateStr;
-          calEndDate = null;
-          dateLabel.textContent = calStartDate;
-        } else {
-          calEndDate = dateStr;
-          dateLabel.textContent = calStartDate + ' - ' + calEndDate;
-          bookingCalDropdown.classList.add('hidden');
-        }
+        calStartDate = dateStr;
+        dateLabel.textContent = calStartDate;
+        bookingCalDropdown.classList.add('hidden');
         renderBookingCalendar();
       });
     });
