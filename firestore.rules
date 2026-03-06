@@ -7,7 +7,9 @@ service cloud.firestore {
       allow read, update: if request.auth != null;
     }
     match /bookings/{bookingId} {
-      allow create: if true;
+      allow create: if request.resource.data.keys().hasAll([
+        'tour', 'guestName', 'date', 'email', 'amount', 'status', 'stripeSessionId', 'createdAt'
+      ]);
       allow read, update: if request.auth != null;
     }
   }

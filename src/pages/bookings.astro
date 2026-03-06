@@ -60,7 +60,8 @@ import Layout from '../layouts/Layout.astro';
                 <th class="text-left px-6 py-3 font-semibold text-gray-600">Tour</th>
                 <th class="text-left px-6 py-3 font-semibold text-gray-600">Guest</th>
                 <th class="text-left px-6 py-3 font-semibold text-gray-600">Email</th>
-                <th class="text-left px-6 py-3 font-semibold text-gray-600">Date</th>
+                <th class="text-left px-6 py-3 font-semibold text-gray-600">Tour Date</th>
+                <th class="text-left px-6 py-3 font-semibold text-gray-600">Booked On</th>
                 <th class="text-left px-6 py-3 font-semibold text-gray-600">Amount</th>
                 <th class="text-left px-6 py-3 font-semibold text-gray-600">Status</th>
                 <th class="text-left px-6 py-3 font-semibold text-gray-600">Actions</th>
@@ -147,6 +148,10 @@ import Layout from '../layouts/Layout.astro';
         .map((s) => `<option value="${s}" ${s === booking.status ? "selected" : ""}>${s.charAt(0).toUpperCase() + s.slice(1)}</option>`)
         .join("");
 
+      const bookedOn = booking.createdAt?.toDate
+        ? booking.createdAt.toDate().toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })
+        : "";
+
       row.innerHTML = `
         <td class="px-6 py-4">
           <span class="font-medium text-gray-900">${escapeHtml(booking.tour)}</span>
@@ -155,6 +160,7 @@ import Layout from '../layouts/Layout.astro';
         <td class="px-6 py-4 text-gray-700">${escapeHtml(booking.guestName)}</td>
         <td class="px-6 py-4 text-gray-500">${escapeHtml(booking.email)}</td>
         <td class="px-6 py-4 text-gray-700">${escapeHtml(booking.date)}</td>
+        <td class="px-6 py-4 text-gray-400 text-xs">${bookedOn}</td>
         <td class="px-6 py-4 font-medium text-gray-900">&euro;${booking.amount.toFixed(2)}</td>
         <td class="px-6 py-4">
           <span class="inline-block text-xs font-semibold px-2.5 py-1 rounded-full ${colorClass}">${booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}</span>
