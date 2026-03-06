@@ -1,4 +1,4 @@
----
+﻿---
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
@@ -15,11 +15,11 @@ const galleryItemClass =
   <main class="pt-6 sm:pt-8">
     <div class="border-b border-gray-200"></div>
     <div class="max-w-6xl mx-auto px-6 py-3">
-      <p class="text-sm text-gray-500">Home &gt; Gallery</p>
+      <p class="text-sm text-gray-500" data-i18n="breadcrumb.homeGallery">Home &gt; Gallery</p>
     </div>
 
     <section class="max-w-6xl mx-auto px-6 py-10">
-      <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-10">Gallery</h1>
+      <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-10" data-i18n="pageTitle.gallery">Gallery</h1>
 
       <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 auto-rows-[180px] sm:auto-rows-[200px] md:auto-rows-[220px]">
         {galleryImages.map((src, i) => (
@@ -170,7 +170,7 @@ const galleryItemClass =
     box-sizing: border-box;
     max-width: calc(100% - 8rem);
   }
-  /* Lightbox img: explicit sizing so it never inherits grid/global img styles – full image visible, no crop */
+  /* Lightbox img: explicit sizing so it never inherits grid/global img styles έΑΥ full image visible, no crop */
   #lightbox .lightbox-img {
     width: auto !important;
     height: auto !important;

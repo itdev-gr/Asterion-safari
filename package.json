@@ -2,6 +2,9 @@
   "name": "asterion-safari",
   "type": "module",
   "version": "0.0.1",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
@@ -9,14 +12,8 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/node": "^9.5.4",
-    "@astrojs/vercel": "^9.0.4",
     "@tailwindcss/vite": "^4.2.1",
     "astro": "^5.17.1",
-    "firebase": "^12.10.0",
-    "firebase-admin": "^13.7.0",
-    "firebase-tools": "^15.8.0",
-    "stripe": "^20.4.0",
     "tailwindcss": "^4.2.1"
   },
   "devDependencies": {

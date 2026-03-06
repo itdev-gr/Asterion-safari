@@ -1,4 +1,4 @@
----
+﻿---
 interface Props {
   images: { src: string; alt: string }[];
 }
@@ -32,6 +32,7 @@ const thumbnails = images.slice(1, 5);
     <button
       type="button"
       class="tour-all-photos inline-block text-orange-500 text-sm font-medium mt-2 hover:text-orange-600 cursor-pointer bg-transparent border-none p-0"
+      data-i18n="tourPhotoGallery.allPhotos"
     >
       All photos
     </button>
@@ -50,6 +51,7 @@ const thumbnails = images.slice(1, 5);
       type="button"
       id="tour-lightbox-close"
       class="tour-lightbox-close-btn tour-lightbox-btn absolute z-[100] w-10 h-10 rounded-full bg-white/20 text-white hover:bg-white/30 flex items-center justify-center transition-colors"
+      data-i18n-aria-label="aria.close"
       aria-label="Close"
     >
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -61,6 +63,7 @@ const thumbnails = images.slice(1, 5);
       type="button"
       id="tour-lightbox-prev"
       class="tour-lightbox-btn absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-[100] w-12 h-12 rounded-full bg-white/20 text-white hover:bg-white/30 flex items-center justify-center transition-colors"
+      data-i18n-aria-label="aria.prev"
       aria-label="Previous image"
     >
       <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -79,6 +82,7 @@ const thumbnails = images.slice(1, 5);
       type="button"
       id="tour-lightbox-next"
       class="tour-lightbox-btn absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-[100] w-12 h-12 rounded-full bg-white/20 text-white hover:bg-white/30 flex items-center justify-center transition-colors"
+      data-i18n-aria-label="aria.next"
       aria-label="Next image"
     >
       <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
