@@ -13,6 +13,7 @@ export const GET: APIRoute = async () => {
 
     const tours = snapshot.docs.map((doc) => ({
       id: doc.id,
+      slug: doc.id,
       ...doc.data(),
     }));
 
