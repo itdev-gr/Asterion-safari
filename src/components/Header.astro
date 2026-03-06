@@ -2,7 +2,7 @@
 import LanguageToggle from './LanguageToggle.astro';
 ---
 
-<header>
+<header class="sticky top-0 z-50">
   <div class="bg-dark text-white text-sm sm:text-base">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center gap-6 h-12 sm:h-14">
       <a href="tel:+306984136633" class="hover:text-primary transition-colors">+30 698 413 6633</a>
@@ -12,7 +12,8 @@ import LanguageToggle from './LanguageToggle.astro';
 
   <nav
     id="main-nav"
-    class="bg-white sticky top-0 z-50 transition-shadow duration-200 overflow-visible"
+    class="transition-all duration-200 overflow-visible"
+    style="background-color: transparent;"
     aria-label="Main navigation"
   >
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -22,11 +23,11 @@ import LanguageToggle from './LanguageToggle.astro';
         </a>
 
         <div class="hidden lg:flex flex-1 justify-center items-center gap-8">
-          <a href="/" class="text-dark hover:text-primary transition-colors font-medium" data-i18n="nav.home">Home</a>
+          <a href="/" class="nav-desktop-link transition-colors font-medium" data-i18n="nav.home">Home</a>
           <div class="relative group">
             <button
               type="button"
-              class="flex items-center gap-1 text-dark hover:text-primary transition-colors font-medium"
+              class="nav-desktop-link flex items-center gap-1 transition-colors font-medium"
               aria-expanded="false"
               aria-haspopup="true"
             >
@@ -40,19 +41,19 @@ import LanguageToggle from './LanguageToggle.astro';
               <a href="/evening-tour" class="block px-4 py-2 text-dark hover:bg-gray-50 hover:text-primary transition-colors" data-i18n="nav.eveningTour">Evening Tour</a>
             </div>
           </div>
-          <a href="/about" class="text-dark hover:text-primary transition-colors font-medium" data-i18n="nav.about">About Us</a>
-          <a href="/gallery" class="text-dark hover:text-primary transition-colors font-medium" data-i18n="nav.gallery">Gallery</a>
-          <a href="/contact" class="text-dark hover:text-primary transition-colors font-medium" data-i18n="nav.contact">Contact</a>
+          <a href="/about" class="nav-desktop-link transition-colors font-medium" data-i18n="nav.about">About Us</a>
+          <a href="/gallery" class="nav-desktop-link transition-colors font-medium" data-i18n="nav.gallery">Gallery</a>
+          <a href="/contact" class="nav-desktop-link transition-colors font-medium" data-i18n="nav.contact">Contact</a>
         </div>
 
-        <div class="hidden lg:flex items-center shrink-0 ml-6">
+        <div class="hidden lg:flex items-center shrink-0 ml-6 nav-lang-toggle">
           <LanguageToggle />
         </div>
 
         <button
           type="button"
           id="mobile-menu-btn"
-          class="lg:hidden p-2 rounded-lg text-dark hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
+          class="nav-mobile-btn lg:hidden p-2 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
           aria-label="Open menu"
           aria-expanded="false"
         >
@@ -131,11 +132,78 @@ import LanguageToggle from './LanguageToggle.astro';
   </div>
 </header>
 
+<style>
+  /* Top of page: white text; after scroll: dark text (sticky header) */
+  :global(#main-nav:not(.is-scrolled) .nav-desktop-link) {
+    color: white;
+  }
+  :global(#main-nav:not(.is-scrolled) .nav-desktop-link:hover) {
+    color: rgba(255, 255, 255, 0.9);
+  }
+  :global(#main-nav.is-scrolled .nav-desktop-link) {
+    color: var(--color-dark);
+  }
+  :global(#main-nav.is-scrolled .nav-desktop-link:hover) {
+    color: var(--color-primary);
+  }
+
+  :global(#main-nav:not(.is-scrolled) .nav-mobile-btn) {
+    color: white;
+  }
+  :global(#main-nav:not(.is-scrolled) .nav-mobile-btn:hover) {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  :global(#main-nav.is-scrolled .nav-mobile-btn) {
+    color: var(--color-dark);
+  }
+  :global(#main-nav.is-scrolled .nav-mobile-btn:hover) {
+    background-color: rgb(243 244 246);
+  }
+
+  :global(#main-nav:not(.is-scrolled) .nav-lang-toggle .lang-toggle) {
+    background: transparent !important;
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+  :global(#main-nav:not(.is-scrolled) .nav-lang-toggle .lang-option) {
+    color: white;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  :global(#main-nav:not(.is-scrolled) .nav-lang-toggle .lang-option[aria-pressed="true"]) {
+    background: rgba(255, 255, 255, 0.15) !important;
+    color: white;
+  }
+  :global(#main-nav:not(.is-scrolled) .nav-lang-toggle .lang-option:hover) {
+    color: white;
+  }
+  :global(#main-nav.is-scrolled .nav-lang-toggle .lang-toggle) {
+    background: transparent !important;
+    border-color: rgb(209 213 219);
+  }
+  :global(#main-nav.is-scrolled .nav-lang-toggle .lang-option) {
+    color: var(--color-dark);
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  :global(#main-nav.is-scrolled .nav-lang-toggle .lang-option[aria-pressed="true"]) {
+    background: rgba(0, 0, 0, 0.06) !important;
+    color: var(--color-primary);
+  }
+</style>
+
 <script>
   const nav = document.getElementById('main-nav');
   if (nav) {
+    const SCROLL_THRESHOLD = 60;
     const onScroll = () => {
-      nav.classList.toggle('shadow-md', window.scrollY > 10);
+      const scrolled = window.scrollY > SCROLL_THRESHOLD;
+      if (scrolled) {
+        nav.style.backgroundColor = '';
+        nav.classList.add('bg-white', 'shadow-md', 'is-scrolled');
+      } else {
+        nav.style.backgroundColor = 'transparent';
+        nav.classList.remove('bg-white', 'shadow-md', 'is-scrolled');
+      }
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
