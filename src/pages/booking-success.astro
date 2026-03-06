@@ -22,3 +22,47 @@ import Footer from '../components/Footer.astro';
   </main>
   <Footer />
 </Layout>
+
+<script>
+  import { collection, query, where, getDocs, addDoc, Timestamp } from "firebase/firestore";
+  import { db } from "../lib/firebase";
+
+  async function saveBooking() {
+    const params = new URLSearchParams(window.location.search);
+    const sessionId = params.get("session_id");
+    if (!sessionId) return;
+
+    // Check if this session was already saved
+    const existing = await getDocs(
+      query(collection(db, "bookings"), where("stripeSessionId", "==", sessionId))
+    );
+    if (!existing.empty) return;
+
+    // Verify session with Stripe via our API
+    const res = await fetch("/api/verify-session", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sessionId }),
+    });
+
+    if (!res.ok) return;
+
+    const data = await res.json();
+
+    await addDoc(collection(db, "bookings"), {
+      tour: data.tour,
+      guestName: data.guestName,
+      date: data.date,
+      sharedCount: data.sharedCount,
+      soloCount: data.soloCount,
+      email: data.email,
+      amount: data.amount,
+      currency: data.currency,
+      status: "paid",
+      stripeSessionId: data.stripeSessionId,
+      createdAt: Timestamp.now(),
+    });
+  }
+
+  saveBooking();
+</script>
