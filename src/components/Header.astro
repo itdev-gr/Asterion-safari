@@ -34,9 +34,8 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
               </svg>
             </button>
-            <div class="absolute top-full left-0 mt-1 w-48 py-2 bg-white rounded-md shadow-lg border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-              <a href="/day-tour" class="block px-4 py-2 text-dark hover:bg-gray-50 hover:text-primary transition-colors">Day Tour</a>
-              <a href="/evening-tour" class="block px-4 py-2 text-dark hover:bg-gray-50 hover:text-primary transition-colors">Evening Tour</a>
+            <div id="desktop-tours-dropdown" class="absolute top-full left-0 mt-1 w-48 py-2 bg-white rounded-md shadow-lg border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+              <!-- Populated dynamically -->
             </div>
           </div>
           <a href="/about" class="text-dark hover:text-primary transition-colors font-medium">About Us</a>
@@ -62,7 +61,7 @@
     </div>
   </nav>
 
-  <!-- Fullscreen mobile menu overlay (lg:hidden = hide on desktop >=1024px) -->
+  <!-- Fullscreen mobile menu overlay -->
   <div
     id="mobile-menu-overlay"
     class="fixed inset-0 z-[100] lg:hidden opacity-0 pointer-events-none transition-opacity duration-300 ease-out overflow-visible"
@@ -96,9 +95,8 @@
               </svg>
             </button>
             <div id="mobile-activities-submenu" class="grid max-h-0 overflow-hidden opacity-0 transition-all duration-200 ease-out grid-rows-[0fr]" aria-hidden="true">
-              <div class="min-h-0">
-                <a href="/day-tour" class="mobile-menu-link block py-3 pl-4 text-xl text-dark hover:text-primary transition-colors">Day Tour</a>
-                <a href="/evening-tour" class="mobile-menu-link block py-3 pl-4 text-xl text-dark hover:text-primary transition-colors">Evening Tour</a>
+              <div class="min-h-0" id="mobile-tours-list">
+                <!-- Populated dynamically -->
               </div>
             </div>
           </div>
@@ -132,11 +130,44 @@
     onScroll();
   }
 
-  // Move mobile menu overlay to end of body so it's always on top (fixes About & other pages)
+  // Move mobile menu overlay to end of body
   const overlayEl = document.getElementById('mobile-menu-overlay');
   if (overlayEl && overlayEl.parentElement && document.body) {
     document.body.appendChild(overlayEl);
   }
+
+  // Load tours dynamically for nav
+  async function loadNavTours() {
+    const cached = sessionStorage.getItem('nav-tours');
+    let tours;
+    if (cached) {
+      try { tours = JSON.parse(cached); } catch { tours = null; }
+    }
+    if (!tours) {
+      try {
+        const res = await fetch('/api/get-tours');
+        tours = await res.json();
+        sessionStorage.setItem('nav-tours', JSON.stringify(tours));
+      } catch { tours = []; }
+    }
+
+    // Desktop dropdown
+    const desktopDropdown = document.getElementById('desktop-tours-dropdown');
+    if (desktopDropdown) {
+      desktopDropdown.innerHTML = tours.map((t: any) =>
+        `<a href="/tours/${t.slug}" class="block px-4 py-2 text-dark hover:bg-gray-50 hover:text-primary transition-colors">${t.shortTitle}</a>`
+      ).join('');
+    }
+
+    // Mobile submenu
+    const mobileToursList = document.getElementById('mobile-tours-list');
+    if (mobileToursList) {
+      mobileToursList.innerHTML = tours.map((t: any) =>
+        `<a href="/tours/${t.slug}" class="mobile-menu-link block py-3 pl-4 text-xl text-dark hover:text-primary transition-colors">${t.shortTitle}</a>`
+      ).join('');
+    }
+  }
+  loadNavTours();
 
   const mobileBtn = document.getElementById('mobile-menu-btn');
   const overlay = document.getElementById('mobile-menu-overlay');
@@ -160,6 +191,17 @@
       closeBtn.style.display = 'flex';
       closeBtn.style.visibility = 'visible';
       closeBtn.style.opacity = '1';
+    }
+    // Reset activities submenu to closed
+    const activitiesSubmenu = document.getElementById('mobile-activities-submenu');
+    const activitiesToggle = document.getElementById('mobile-activities-toggle');
+    const activitiesChevron = document.getElementById('mobile-activities-chevron');
+    if (activitiesSubmenu) {
+      activitiesSubmenu.classList.remove('grid-rows-[1fr]', 'opacity-100', 'max-h-none');
+      activitiesSubmenu.classList.add('grid-rows-[0fr]', 'opacity-0', 'max-h-0');
+      activitiesToggle?.setAttribute('aria-expanded', 'false');
+      activitiesSubmenu.setAttribute('aria-hidden', 'true');
+      activitiesChevron?.classList.remove('rotate-180');
     }
   }
 
@@ -201,7 +243,7 @@
 
   document.getElementById('mobile-menu-logo-link')?.addEventListener('click', closeMobileMenu);
 
-  // Mobile submenu: Quad Safari Activities accordion (closed by default)
+  // Mobile submenu accordion
   const activitiesToggle = document.getElementById('mobile-activities-toggle');
   const activitiesSubmenu = document.getElementById('mobile-activities-submenu');
   const activitiesChevron = document.getElementById('mobile-activities-chevron');
@@ -222,17 +264,4 @@
       activitiesChevron?.classList.add('rotate-180');
     }
   });
-
-  // When opening mobile menu, reset activities submenu to closed
-  const originalOpenMobileMenu = openMobileMenu;
-  openMobileMenu = function () {
-    originalOpenMobileMenu();
-    if (activitiesSubmenu) {
-      activitiesSubmenu.classList.remove('grid-rows-[1fr]', 'opacity-100', 'max-h-none');
-      activitiesSubmenu.classList.add('grid-rows-[0fr]', 'opacity-0', 'max-h-0');
-      activitiesToggle?.setAttribute('aria-expanded', 'false');
-      activitiesSubmenu.setAttribute('aria-hidden', 'true');
-      activitiesChevron?.classList.remove('rotate-180');
-    }
-  };
 </script>

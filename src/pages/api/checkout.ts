@@ -2,6 +2,7 @@ export const prerender = false;
 
 import type { APIRoute } from "astro";
 import Stripe from "stripe";
+import { adminDb } from "../../lib/firebase-admin";
 
 export const POST: APIRoute = async ({ request }) => {
   const secretKey = process.env.STRIPE_SECRET_KEY;
@@ -14,10 +15,16 @@ export const POST: APIRoute = async ({ request }) => {
   const stripe = new Stripe(secretKey);
   try {
     const body = await request.json();
-    const { tour, sharedCount, soloCount, guestName, date } = body;
+    const { tourSlug, sharedCount, soloCount, guestName, date } = body;
 
-    const pricePerUnit = tour === "evening" ? 13000 : 16000; // cents
-    const tourName = tour === "evening" ? "Evening Tour" : "Day Tour";
+    // Fetch tour from Firestore for pricing
+    const tourDoc = await adminDb.collection("tours").doc(tourSlug).get();
+    if (!tourDoc.exists) {
+      return new Response(JSON.stringify({ error: "Tour not found" }), { status: 404 });
+    }
+    const tourData = tourDoc.data()!;
+    const pricePerUnit = tourData.priceCents;
+    const tourName = tourData.title;
 
     const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
 
@@ -68,7 +75,7 @@ export const POST: APIRoute = async ({ request }) => {
         description: `${tourName} booking for ${guestName} on ${date}`,
       },
       success_url: `${origin}/booking-success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/${tour === "evening" ? "evening-tour" : "day-tour"}`,
+      cancel_url: `${origin}/tours/${tourSlug}`,
       metadata: {
         tour: tourName,
         guestName,

@@ -1,0 +1,525 @@
+---
+export const prerender = false;
+
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import TourPhotoGallery from '../../components/TourPhotoGallery.astro';
+import { adminDb } from '../../lib/firebase-admin';
+
+const { slug } = Astro.params;
+
+const doc = await adminDb.collection('tours').doc(slug!).get();
+
+if (!doc.exists || !doc.data()?.active) {
+  return Astro.redirect('/404');
+}
+
+const tour = { slug: doc.id, ...doc.data() } as any;
+
+// Fetch other active tours for "Explore other options"
+const othersSnap = await adminDb
+  .collection('tours')
+  .where('active', '==', true)
+  .orderBy('order', 'asc')
+  .get();
+
+const otherTours = othersSnap.docs
+  .filter((d) => d.id !== slug)
+  .map((d) => ({ slug: d.id, ...d.data() })) as any[];
+
+const tourSlug = tour.slug;
+const tourPrice = tour.price;
+const tourTitle = tour.title;
+const tourImages = tour.images || [];
+---
+
+<Layout title={`${tour.title} - Asterion Safari`}>
+  <Header />
+  <main>
+    <div class="border-b border-gray-200"></div>
+    <div class="max-w-6xl mx-auto px-6 py-3">
+      <p class="text-sm text-gray-500">
+        Home &gt; Malia &gt; {tour.title}
+      </p>
+    </div>
+
+    <!-- Main section -->
+    <section class="max-w-6xl mx-auto px-6 py-10">
+      <div class="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-10 items-start">
+        <!-- LEFT COLUMN -->
+        <div>
+          <h1 class="text-2xl font-bold text-gray-900 mb-1">{tour.title}</h1>
+          <p class="text-sm text-gray-400 mb-6">0 (0 Reviews)</p>
+
+          <!-- Photo gallery -->
+          <TourPhotoGallery images={tourImages} />
+
+          <!-- Info badges -->
+          <div class="flex flex-wrap gap-6 mt-8 mb-8 py-6 border-y border-gray-100">
+            <div class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <div>
+                <p class="text-xs text-gray-400">Duration</p>
+                <p class="text-sm font-semibold text-gray-900">{tour.duration}</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+              <div>
+                <p class="text-xs text-gray-400">Cancellation</p>
+                <p class="text-sm font-semibold text-gray-900">{tour.cancellation}</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+              <div>
+                <p class="text-xs text-gray-400">Group Size</p>
+                <p class="text-sm font-semibold text-gray-900">{tour.groupSize}</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0h.5a2.5 2.5 0 002.5-2.5V3.935M12 12h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <div>
+                <p class="text-xs text-gray-400">Languages</p>
+                <p class="text-sm font-semibold text-gray-900">{tour.languages}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- About this activity -->
+          <h2 class="text-xl font-bold text-gray-900 mb-3">About this activity</h2>
+          <p class="text-gray-600 leading-relaxed mb-8">{tour.aboutText}</p>
+
+          <!-- Know before you go -->
+          <h2 class="text-xl font-bold text-gray-900 mb-3">Know before you go</h2>
+          <ul class="text-gray-600 text-sm space-y-2 mb-4 list-disc list-inside">
+            {(tour.knowBeforeYouGo || []).map((item: string) => (
+              <li>{item}</li>
+            ))}
+          </ul>
+          <p class="text-gray-900 font-bold text-sm mb-8">
+            We offer free pick up from: {tour.pickupLocations}
+          </p>
+
+          <!-- Highlights -->
+          <h2 class="text-xl font-bold text-gray-900 mb-3">Highlights</h2>
+          <ul class="space-y-2 mb-8">
+            {(tour.highlights || []).map((h: string) => (
+              <li class="flex items-start gap-2 text-gray-700"><span class="text-orange-500 font-bold">&#10003;</span> {h}</li>
+            ))}
+          </ul>
+
+          <!-- Included / Excluded -->
+          <h2 class="text-xl font-bold text-gray-900 mb-4">Included / Excluded</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+            <div>
+              <p class="font-bold text-gray-900 mb-2">Included</p>
+              <ul class="text-gray-600 text-sm space-y-1">
+                {(tour.included || []).map((item: string) => (
+                  <li class="flex items-center gap-2"><span class="text-green-500">&#10003;</span> {item}</li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <p class="font-bold text-gray-900 mb-2">Excluded</p>
+              <ul class="text-gray-600 text-sm space-y-1">
+                {(tour.excluded || []).map((item: string) => (
+                  <li class="flex items-center gap-2"><span class="text-red-400">&#10007;</span> {item}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <!-- FAQ -->
+          <h2 class="text-xl font-bold text-gray-900 mb-4">FAQ</h2>
+          <div class="space-y-2">
+            {(tour.faq || []).map((f: any) => (
+              <div class="border border-gray-200 rounded-xl overflow-hidden">
+                <button type="button" class="faq-question w-full text-left px-4 py-3 font-bold text-gray-900 flex justify-between items-center hover:bg-gray-50">
+                  {f.question}
+                  <span class="faq-arrow text-gray-500">&#9660;</span>
+                </button>
+                <div class="faq-answer px-4 py-3 bg-gray-50 text-gray-600 text-sm hidden">{f.answer}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN - Sidebar -->
+        <aside class="space-y-6 lg:sticky lg:top-24 lg:self-start overflow-visible">
+
+          <!-- Card 1: Booking -->
+          <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 overflow-visible relative">
+            <p class="text-lg mb-4">From: <span class="font-bold text-xl">&euro;{tour.price.toLocaleString('de-DE', { minimumFractionDigits: 2 })}</span></p>
+
+            <!-- Tabs -->
+            <div class="flex border-b border-gray-200 mb-4">
+              <button type="button" id="tab-book" class="pb-2 mr-6 text-sm font-semibold border-b-2 border-orange-500 text-orange-500">Book</button>
+              <button type="button" id="tab-inquiry" class="pb-2 text-sm text-gray-400 border-b-2 border-transparent hover:text-gray-600">Inquiry</button>
+            </div>
+
+            <!-- Book panel -->
+            <div id="booking-panel">
+            <div class="border border-gray-200 rounded-xl p-3 mb-3 relative cursor-pointer select-none" id="booking-date-btn" role="button" tabindex="0">
+              <p class="text-xs text-gray-400 mb-1">Date</p>
+              <p class="text-sm font-semibold text-orange-500 flex items-center justify-between"><span id="selected-date">Select a date</span> <span class="text-gray-400 ml-1">&#9662;</span></p>
+              <div id="booking-cal-dropdown" class="hidden absolute left-0 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-xl z-[100] p-4" style="min-width: 320px;">
+                <div class="grid grid-cols-2 gap-4" id="booking-calendar-container"></div>
+              </div>
+            </div>
+
+            <div class="border border-gray-200 rounded-xl p-4 mb-3 flex items-center justify-between">
+              <div class="flex-1 pr-4">
+                <p class="text-sm font-semibold mb-1">Shared Quad Bike</p>
+                <p class="text-xs text-gray-500">Booking for two persons, you receive one quad bike for shared use.</p>
+              </div>
+              <div class="flex items-center gap-3 flex-shrink-0">
+                <button type="button" id="shared-minus" class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-500 hover:border-orange-500 hover:text-orange-500 transition-colors text-lg leading-none">&minus;</button>
+                <span id="shared-count" class="text-sm font-semibold w-4 text-center">0</span>
+                <button type="button" id="shared-plus" class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-500 hover:border-orange-500 hover:text-orange-500 transition-colors text-lg leading-none">+</button>
+              </div>
+            </div>
+
+            <div class="border border-gray-200 rounded-xl p-4 mb-3 flex items-center justify-between">
+              <div class="flex-1 pr-4">
+                <p class="text-sm font-semibold mb-1">Solo Riding</p>
+                <p class="text-xs text-gray-500">Booking for one person, you receive one quad bike for individual use.</p>
+              </div>
+              <div class="flex items-center gap-3 flex-shrink-0">
+                <button type="button" id="solo-minus" class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-500 hover:border-orange-500 hover:text-orange-500 transition-colors text-lg leading-none">&minus;</button>
+                <span id="solo-count" class="text-sm font-semibold w-4 text-center">0</span>
+                <button type="button" id="solo-plus" class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-500 hover:border-orange-500 hover:text-orange-500 transition-colors text-lg leading-none">+</button>
+              </div>
+            </div>
+
+            <input id="guest-name" type="text" placeholder="Guest Name *" class="border border-gray-200 rounded-xl px-4 py-3 w-full text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-orange-400" />
+
+            <div class="flex justify-between items-center py-4 border-t border-gray-100 mb-4">
+              <span class="font-bold text-base">Total</span>
+              <span class="font-bold text-base" id="total-price">&euro;0,00</span>
+            </div>
+
+            <button type="button" class="book-now-btn bg-orange-500 hover:bg-orange-600 text-white font-semibold w-full py-3 rounded-full transition-colors mb-2">
+              Book now
+            </button>
+
+            <div id="min-notice" class="hidden flex items-center justify-between bg-orange-50 border border-orange-200 rounded-lg px-3 py-2 mt-2">
+              <p class="text-xs text-orange-600">Min of people for this activity is 1 people</p>
+              <button type="button" class="min-notice-close text-orange-400 text-sm ml-2">&times;</button>
+            </div>
+            </div>
+
+            <!-- Inquiry panel -->
+            <div id="inquiry-panel" class="hidden">
+              <input id="inquiry-name" type="text" placeholder="Name *" class="border border-gray-200 rounded-xl px-4 py-3 w-full text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-orange-400" />
+              <input id="inquiry-email" type="email" placeholder="Email *" class="border border-gray-200 rounded-xl px-4 py-3 w-full text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-orange-400" />
+              <input id="inquiry-phone" type="text" placeholder="Phone *" class="border border-gray-200 rounded-xl px-4 py-3 w-full text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-orange-400" />
+              <textarea id="inquiry-note" placeholder="Note *" rows="4" class="border border-gray-200 rounded-xl px-4 py-3 w-full text-sm mb-4 resize-y focus:outline-none focus:ring-2 focus:ring-orange-400"></textarea>
+              <button type="button" id="inquiry-send-btn" class="inquiry-send-btn bg-orange-500 hover:bg-orange-600 text-white font-semibold w-full py-3 rounded-full transition-colors">
+                Send
+              </button>
+              <p id="inquiry-status" class="mt-3 text-sm hidden"></p>
+            </div>
+          </div>
+
+          <!-- Card 2: Why book with us -->
+          <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">Why book with us?</h3>
+            <div class="space-y-4">
+              {(tour.whyBookWithUs || []).map((item: any) => (
+                <div class="flex gap-3">
+                  <span class="text-orange-500 font-bold mt-0.5">&#10003;</span>
+                  <div>
+                    <p class="text-sm font-semibold text-gray-900">{item.title}</p>
+                    <p class="text-sm text-gray-600 mt-0.5 leading-relaxed">{item.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <!-- Card 3: Contact -->
+          <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">Information Contact</h3>
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold text-gray-600">{tour.contact?.initials || 'AQ'}</div>
+              <div>
+                <p class="text-sm font-semibold text-gray-900">{tour.contact?.name}</p>
+                <p class="text-xs text-gray-400">Member Since {tour.contact?.memberSince}</p>
+              </div>
+            </div>
+            <dl class="space-y-4 text-sm">
+              <div>
+                <dt class="font-semibold text-gray-900">Email</dt>
+                <dd class="mt-0.5"><a href={`mailto:${tour.contact?.email}`} class="text-orange-500 hover:underline">{tour.contact?.email}</a></dd>
+              </div>
+              <div>
+                <dt class="font-semibold text-gray-900">Website</dt>
+                <dd class="mt-0.5"><a href={`https://${tour.contact?.website}`} target="_blank" rel="noopener" class="text-orange-500 hover:underline">{tour.contact?.website}</a></dd>
+              </div>
+              <div>
+                <dt class="font-semibold text-gray-900">Phone</dt>
+                <dd class="text-gray-600 mt-0.5">{tour.contact?.phone}</dd>
+              </div>
+            </dl>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- Explore other options -->
+    <section class="bg-gray-50 py-12">
+      <div class="max-w-6xl mx-auto px-6">
+        <h2 class="text-xl font-bold text-gray-900 mb-6">Explore other options</h2>
+        <div class="flex flex-wrap gap-6">
+          {otherTours.map((other: any) => (
+            <a href={`/tours/${other.slug}`} class="block max-w-sm bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden hover:shadow-lg transition-shadow">
+              <img src={other.cardImage} alt={other.shortTitle} class="w-full h-48 object-cover" />
+              <div class="p-4">
+                <h3 class="font-bold text-gray-900 mb-2">{other.title}</h3>
+                <p class="text-orange-500 font-bold mb-1">From &euro;{other.price?.toLocaleString('de-DE', { minimumFractionDigits: 2 })}</p>
+                <p class="text-sm text-gray-500 mb-3">{other.duration}</p>
+                <span class="inline-block bg-orange-500 text-white text-sm font-semibold px-4 py-2 rounded-full hover:bg-orange-600 transition-colors">View details</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Layout>
+
+<div id="tour-data" data-slug={tourSlug} data-price={String(tourPrice)} data-title={tourTitle} class="hidden"></div>
+
+<script>
+  import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+  import { db } from "../../lib/firebase";
+
+  const tourDataEl = document.getElementById('tour-data')!;
+  const tourSlug = tourDataEl.dataset.slug!;
+  const tourPrice = Number(tourDataEl.dataset.price);
+  const tourTitle = tourDataEl.dataset.title!;
+
+  document.querySelectorAll('.faq-question').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const answer = btn.nextElementSibling as HTMLElement;
+      answer.classList.toggle('hidden');
+      const arrow = btn.querySelector('.faq-arrow');
+      if (arrow) arrow.textContent = answer.classList.contains('hidden') ? '\u25BC' : '\u25B2';
+    });
+  });
+
+  const PRICE = tourPrice;
+  let sharedCount = 0;
+  let soloCount = 0;
+
+  function updateTotal() {
+    const total = (sharedCount + soloCount) * PRICE;
+    const el = document.getElementById('total-price');
+    if (el) el.textContent = total === 0 ? '\u20AC0,00' : `\u20AC${total.toLocaleString('de-DE', { minimumFractionDigits: 2 })}`;
+  }
+
+  document.getElementById('shared-plus')?.addEventListener('click', () => {
+    sharedCount++;
+    const el = document.getElementById('shared-count');
+    if (el) el.textContent = String(sharedCount);
+    updateTotal();
+  });
+  document.getElementById('shared-minus')?.addEventListener('click', () => {
+    if (sharedCount > 0) {
+      sharedCount--;
+      const el = document.getElementById('shared-count');
+      if (el) el.textContent = String(sharedCount);
+      updateTotal();
+    }
+  });
+  document.getElementById('solo-plus')?.addEventListener('click', () => {
+    soloCount++;
+    const el = document.getElementById('solo-count');
+    if (el) el.textContent = String(soloCount);
+    updateTotal();
+  });
+  document.getElementById('solo-minus')?.addEventListener('click', () => {
+    if (soloCount > 0) {
+      soloCount--;
+      const el = document.getElementById('solo-count');
+      if (el) el.textContent = String(soloCount);
+      updateTotal();
+    }
+  });
+
+  document.querySelector('.book-now-btn')?.addEventListener('click', async () => {
+    if (sharedCount + soloCount === 0) {
+      document.getElementById('min-notice')?.classList.remove('hidden');
+      return;
+    }
+
+    const guestName = (document.getElementById('guest-name') as HTMLInputElement).value.trim();
+    if (!guestName) {
+      (document.getElementById('guest-name') as HTMLInputElement).focus();
+      return;
+    }
+
+    const btn = document.querySelector('.book-now-btn') as HTMLButtonElement;
+    btn.textContent = 'Processing...';
+    btn.disabled = true;
+
+    try {
+      const date = document.getElementById('selected-date')?.textContent || '';
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tourSlug, sharedCount, soloCount, guestName, date }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert(data.error || 'Something went wrong. Please try again.');
+        btn.textContent = 'Book now';
+        btn.disabled = false;
+      }
+    } catch {
+      alert('Something went wrong. Please try again.');
+      btn.textContent = 'Book now';
+      btn.disabled = false;
+    }
+  });
+
+  document.querySelector('.min-notice-close')?.addEventListener('click', () => {
+    document.getElementById('min-notice')?.classList.add('hidden');
+  });
+
+  // Book / Inquiry tabs
+  const tabBook = document.getElementById('tab-book');
+  const tabInquiry = document.getElementById('tab-inquiry');
+  const bookingPanel = document.getElementById('booking-panel');
+  const inquiryPanel = document.getElementById('inquiry-panel');
+  tabBook?.addEventListener('click', () => {
+    bookingPanel?.classList.remove('hidden');
+    inquiryPanel?.classList.add('hidden');
+    tabBook.classList.add('border-orange-500', 'text-orange-500');
+    tabBook.classList.remove('border-transparent', 'text-gray-400');
+    tabInquiry?.classList.remove('border-orange-500', 'text-orange-500');
+    tabInquiry?.classList.add('border-transparent', 'text-gray-400');
+  });
+  tabInquiry?.addEventListener('click', () => {
+    bookingPanel?.classList.add('hidden');
+    inquiryPanel?.classList.remove('hidden');
+    tabInquiry?.classList.add('border-orange-500', 'text-orange-500');
+    tabInquiry?.classList.remove('border-transparent', 'text-gray-400');
+    tabBook?.classList.remove('border-orange-500', 'text-orange-500');
+    tabBook?.classList.add('border-transparent', 'text-gray-400');
+  });
+
+  // Calendar
+  const bookingDateBtn = document.getElementById('booking-date-btn');
+  const bookingCalDropdown = document.getElementById('booking-cal-dropdown');
+  const dateLabel = document.getElementById('selected-date');
+  let calStartDate: string | null = null;
+  let calMonth = new Date().getMonth();
+  let calYear = new Date().getFullYear();
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const dayHeaders = ['Mo','Tu','We','Th','Fr','Sa','Su'];
+
+  function formatDate(d: number, m: number, y: number) {
+    return `${String(d).padStart(2,'0')}/${String(m+1).padStart(2,'0')}/${y}`;
+  }
+
+  function renderBookingCalendar() {
+    const container = document.getElementById('booking-calendar-container');
+    if (!container) return;
+    container.innerHTML = '';
+    for (let i = 0; i < 2; i++) {
+      const m = (calMonth + i) % 12;
+      const y = calYear + Math.floor((calMonth + i) / 12);
+      const firstDay = new Date(y, m, 1).getDay();
+      const offset = firstDay === 0 ? 6 : firstDay - 1;
+      const daysInMonth = new Date(y, m + 1, 0).getDate();
+      let html = '<div><div class="font-semibold text-sm text-gray-700 mb-2">' + monthNames[m] + ' ' + y + '</div>';
+      html += '<div class="grid grid-cols-7 gap-0.5 text-xs text-gray-500 mb-1">' + dayHeaders.map(h => '<div class="text-center">' + h + '</div>').join('') + '</div>';
+      html += '<div class="grid grid-cols-7 gap-0.5">';
+      html += '<div></div>'.repeat(offset);
+      for (let d = 1; d <= daysInMonth; d++) {
+        const dateStr = formatDate(d, m, y);
+        const isStart = calStartDate === dateStr;
+        const isToday = d === new Date().getDate() && m === new Date().getMonth() && y === new Date().getFullYear();
+        let cls = 'text-center text-sm py-1.5 rounded cursor-pointer hover:bg-orange-100 transition-colors';
+        if (isStart) cls += ' bg-orange-500 text-white hover:bg-orange-600';
+        else if (isToday) cls += ' border border-orange-400';
+        html += '<div class="booking-cal-day ' + cls + '" data-date="' + dateStr + '">' + d + '</div>';
+      }
+      html += '</div></div>';
+      container.innerHTML += html;
+    }
+    document.querySelectorAll('.booking-cal-day').forEach(el => {
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const dateStr = (e.currentTarget as HTMLElement).dataset.date!;
+        calStartDate = dateStr;
+        if (dateLabel) dateLabel.textContent = calStartDate;
+        bookingCalDropdown?.classList.add('hidden');
+        renderBookingCalendar();
+      });
+    });
+  }
+
+  bookingDateBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    bookingCalDropdown?.classList.toggle('hidden');
+    if (!bookingCalDropdown?.classList.contains('hidden')) renderBookingCalendar();
+  });
+  document.addEventListener('click', (e) => {
+    if (bookingDateBtn && bookingCalDropdown && !bookingDateBtn.contains(e.target as Node) && !bookingCalDropdown.contains(e.target as Node)) {
+      bookingCalDropdown.classList.add('hidden');
+    }
+  });
+
+  // Inquiry form -> Firestore
+  const inquirySendBtn = document.getElementById('inquiry-send-btn');
+  const inquiryStatus = document.getElementById('inquiry-status')!;
+
+  inquirySendBtn?.addEventListener('click', async () => {
+    const name = (document.getElementById('inquiry-name') as HTMLInputElement).value.trim();
+    const email = (document.getElementById('inquiry-email') as HTMLInputElement).value.trim();
+    const phone = (document.getElementById('inquiry-phone') as HTMLInputElement).value.trim();
+    const note = (document.getElementById('inquiry-note') as HTMLTextAreaElement).value.trim();
+
+    if (!name || !email || !phone) {
+      inquiryStatus.textContent = "Please fill in all required fields.";
+      inquiryStatus.className = "mt-3 text-sm text-red-600";
+      return;
+    }
+
+    inquirySendBtn.textContent = "Sending...";
+    (inquirySendBtn as HTMLButtonElement).disabled = true;
+    inquiryStatus.classList.add("hidden");
+
+    try {
+      await addDoc(collection(db, "messages"), {
+        name,
+        email,
+        phone,
+        message: note,
+        source: tourTitle + " Inquiry",
+        read: false,
+        createdAt: serverTimestamp(),
+      });
+
+      inquiryStatus.textContent = "Inquiry sent successfully!";
+      inquiryStatus.className = "mt-3 text-sm text-green-600";
+      (document.getElementById('inquiry-name') as HTMLInputElement).value = "";
+      (document.getElementById('inquiry-email') as HTMLInputElement).value = "";
+      (document.getElementById('inquiry-phone') as HTMLInputElement).value = "";
+      (document.getElementById('inquiry-note') as HTMLTextAreaElement).value = "";
+    } catch (err) {
+      inquiryStatus.textContent = "Failed to send. Please try again.";
+      inquiryStatus.className = "mt-3 text-sm text-red-600";
+    } finally {
+      inquirySendBtn.textContent = "Send";
+      (inquirySendBtn as HTMLButtonElement).disabled = false;
+    }
+  });
+</script>
