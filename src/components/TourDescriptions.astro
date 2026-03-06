@@ -32,6 +32,9 @@
     const container = document.getElementById('tour-descriptions-container');
     if (!container || !tours.length) return;
 
+    // Filter tours with descriptions
+    tours = tours.filter((t: any) => t.longDescription && t.shortTitle);
+
     // Build text blocks
     const textBlocks = tours.map((t: any) => `
       <div class="flex flex-col min-w-0 text-center md:text-center">
@@ -41,7 +44,7 @@
     `).join('');
 
     // Build map blocks
-    const mapBlocks = tours.map((t: any) => t.mapEmbedUrl ? `
+    const mapBlocks = tours.map((t: any) => t.mapEmbedUrl && t.mapEmbedUrl.startsWith('http') ? `
       <div class="flex-1 min-w-0 text-center mt-0 md:mt-2">
         <iframe
           src="${t.mapEmbedUrl}"

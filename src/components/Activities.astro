@@ -36,6 +36,8 @@
     const container = document.getElementById('activities-container');
     if (!container || !tours.length) return;
 
+    tours = tours.filter((t: any) => t.title && t.cardImage && t.cardImage.startsWith('http'));
+
     container.innerHTML = tours.map((t: any) => `
       <article class="bg-white rounded-xl shadow-md overflow-hidden flex flex-col md:flex-row min-w-0">
         <div class="w-full md:w-[40%] shrink-0 flex-shrink-0">
