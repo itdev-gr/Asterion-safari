@@ -1,5 +1,8 @@
 ---
 import LanguageToggle from './LanguageToggle.astro';
+import { getActiveTours } from '../lib/firebase-server';
+
+const tours = await getActiveTours() as any[];
 ---
 
 <header id="main-header" class="sticky top-0 z-50">
@@ -19,7 +22,7 @@ import LanguageToggle from './LanguageToggle.astro';
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between min-h-[100px] max-lg:min-h-[72px] py-0.5 overflow-visible">
         <a href="/" class="flex items-center shrink-0 -ml-[96px] lg:-ml-[96px] max-lg:ml-0">
-          <img src="/photo/logo.webp" alt="Asterion Safari - Quad Biking Adventures" width="120" height="120" class="h-[120px] w-auto object-contain max-lg:h-20" />
+          <img src="/photo/logo.svg" alt="Asterion Safari - Quad Biking Adventures" width="120" height="120" class="h-[120px] w-auto object-contain max-lg:h-20" />
         </a>
 
         <div class="hidden lg:flex flex-1 justify-center items-center gap-8">
@@ -37,8 +40,11 @@ import LanguageToggle from './LanguageToggle.astro';
               </svg>
             </button>
             <div class="absolute top-full left-0 mt-1 w-48 py-2 bg-white rounded-md shadow-lg border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-              <a href="/day-tour" class="block px-4 py-2 text-dark hover:bg-gray-50 hover:text-primary transition-colors" data-i18n="nav.dayTour">Day Tour</a>
-              <a href="/evening-tour" class="block px-4 py-2 text-dark hover:bg-gray-50 hover:text-primary transition-colors" data-i18n="nav.eveningTour">Evening Tour</a>
+              {tours.map((tour) => (
+                <a href={`/tours/${tour.slug}`} class="block px-4 py-2 text-dark hover:bg-gray-50 hover:text-primary transition-colors">
+                  {tour.shortTitle || tour.title}
+                </a>
+              ))}
             </div>
           </div>
           <a href="/about" class="nav-desktop-link transition-colors font-medium" data-i18n="nav.about">About Us</a>
@@ -82,7 +88,7 @@ import LanguageToggle from './LanguageToggle.astro';
     >
       <div class="flex items-center justify-between px-4 sm:px-6 h-16 min-h-16 border-b border-gray-200 shrink-0 bg-white">
         <a href="/" class="flex items-center" id="mobile-menu-logo-link">
-          <img src="/photo/logo.webp" alt="Asterion Safari - Quad Biking Adventures" width="80" height="80" class="h-20 w-auto object-contain" />
+          <img src="/photo/logo.svg" alt="Asterion Safari - Quad Biking Adventures" width="80" height="80" class="h-20 w-auto object-contain" />
         </a>
         <div class="w-11 shrink-0" aria-hidden="true"></div>
       </div>
@@ -108,8 +114,11 @@ import LanguageToggle from './LanguageToggle.astro';
             </button>
             <div id="mobile-activities-submenu" class="grid max-h-0 overflow-hidden opacity-0 transition-all duration-200 ease-out grid-rows-[0fr]" aria-hidden="true">
               <div class="min-h-0">
-                <a href="/day-tour" class="mobile-menu-link block py-3 pl-4 text-xl text-dark hover:text-primary transition-colors" data-i18n="nav.dayTour">Day Tour</a>
-                <a href="/evening-tour" class="mobile-menu-link block py-3 pl-4 text-xl text-dark hover:text-primary transition-colors" data-i18n="nav.eveningTour">Evening Tour</a>
+                {tours.map((tour) => (
+                  <a href={`/tours/${tour.slug}`} class="mobile-menu-link block py-3 pl-4 text-xl text-dark hover:text-primary transition-colors">
+                    {tour.shortTitle || tour.title}
+                  </a>
+                ))}
               </div>
             </div>
           </div>

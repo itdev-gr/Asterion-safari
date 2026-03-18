@@ -75,6 +75,27 @@ export async function getGalleryImages() {
 /**
  * Fetch a single tour by slug (document ID).
  */
+/**
+ * Fetch shared tour defaults from settings/tour-defaults.
+ */
+export async function getTourDefaults() {
+  if (adminDb) {
+    const docSnap = await adminDb.collection("settings").doc("tour-defaults").get();
+    if (!docSnap.exists) return {};
+    return docSnap.data() || {};
+  }
+
+  // Fallback: client SDK
+  try {
+    const db = getClientDb();
+    const docSnap = await getDoc(doc(db, "settings", "tour-defaults"));
+    if (!docSnap.exists()) return {};
+    return docSnap.data() || {};
+  } catch {
+    return {};
+  }
+}
+
 export async function getTourBySlug(slug: string) {
   if (adminDb) {
     const docSnap = await adminDb.collection("tours").doc(slug).get();

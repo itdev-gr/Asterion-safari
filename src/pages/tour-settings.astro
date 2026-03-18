@@ -1,0 +1,292 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Tour Settings - Asterion Safari">
+  <!-- Loading spinner -->
+  <div id="loading" class="min-h-screen flex items-center justify-center bg-[#f8f9fa]">
+    <div class="w-10 h-10 border-4 border-orange-200 border-t-orange-500 rounded-full animate-spin"></div>
+  </div>
+
+  <!-- Tour settings content -->
+  <div id="settings-page" class="hidden min-h-screen bg-[#f8f9fa]">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-100">
+      <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+        <a href="/">
+          <img src="/photo/logo.svg" alt="Asterion Safari" class="h-10" />
+        </a>
+        <div class="flex items-center gap-4">
+          <a href="/dashboard" class="text-sm text-gray-600 hover:text-orange-500 transition-colors">&larr; Back to Dashboard</a>
+          <button
+            id="sign-out-btn"
+            class="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-2 rounded-full text-sm transition-colors cursor-pointer"
+          >
+            Sign Out
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main -->
+    <main class="max-w-6xl mx-auto px-6 py-12">
+      <h1 class="text-2xl font-bold text-gray-900 mb-8">Tour Settings</h1>
+      <p class="text-sm text-gray-500 mb-6">These shared defaults apply to all tours. Per-tour fields (title, price, highlights, included, images) are managed in each tour.</p>
+
+      <form id="settings-form" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-6">
+        <!-- Info fields -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Duration</label>
+            <input name="duration" type="text" class="border border-gray-200 rounded-xl px-4 py-2.5 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" placeholder="4,5 Hours" />
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Cancellation</label>
+            <input name="cancellation" type="text" class="border border-gray-200 rounded-xl px-4 py-2.5 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" placeholder="Up to 2 days" />
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Group Size</label>
+            <input name="groupSize" type="text" class="border border-gray-200 rounded-xl px-4 py-2.5 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" placeholder="10 people" />
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Languages</label>
+            <input name="languages" type="text" class="border border-gray-200 rounded-xl px-4 py-2.5 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" placeholder="English" />
+          </div>
+        </div>
+
+        <!-- Pickup Locations -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Pickup Locations</label>
+          <input name="pickupLocations" type="text" class="border border-gray-200 rounded-xl px-4 py-2.5 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" />
+        </div>
+
+        <!-- Dynamic lists -->
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Excluded</label>
+            <div id="excluded-list" class="space-y-2"></div>
+            <button type="button" data-add="excluded" class="mt-2 text-sm text-orange-500 hover:text-orange-600 cursor-pointer">+ Add item</button>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Know Before You Go</label>
+            <div id="knowBeforeYouGo-list" class="space-y-2"></div>
+            <button type="button" data-add="knowBeforeYouGo" class="mt-2 text-sm text-orange-500 hover:text-orange-600 cursor-pointer">+ Add item</button>
+          </div>
+        </div>
+
+        <!-- FAQ -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">FAQ</label>
+          <div id="faq-list" class="space-y-2"></div>
+          <button type="button" id="add-faq-btn" class="mt-2 text-sm text-orange-500 hover:text-orange-600 cursor-pointer">+ Add FAQ</button>
+        </div>
+
+        <!-- Why Book With Us -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Why Book With Us</label>
+          <div id="whyBookWithUs-list" class="space-y-2"></div>
+          <button type="button" id="add-why-btn" class="mt-2 text-sm text-orange-500 hover:text-orange-600 cursor-pointer">+ Add reason</button>
+        </div>
+
+        <!-- Contact info -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">Contact Info</label>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <input name="contact.name" type="text" placeholder="Name" class="border border-gray-200 rounded-xl px-4 py-2.5 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" />
+            <input name="contact.initials" type="text" placeholder="Initials (e.g. AQ)" class="border border-gray-200 rounded-xl px-4 py-2.5 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" />
+            <input name="contact.memberSince" type="text" placeholder="Member Since" class="border border-gray-200 rounded-xl px-4 py-2.5 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" />
+            <input name="contact.email" type="text" placeholder="Email" class="border border-gray-200 rounded-xl px-4 py-2.5 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" />
+            <input name="contact.website" type="text" placeholder="Website" class="border border-gray-200 rounded-xl px-4 py-2.5 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" />
+            <input name="contact.phone" type="text" placeholder="Phone" class="border border-gray-200 rounded-xl px-4 py-2.5 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" />
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <div class="flex gap-3 pt-4 border-t border-gray-100">
+          <button type="submit" id="save-btn" class="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-2.5 rounded-full text-sm transition-colors cursor-pointer">
+            Save Settings
+          </button>
+        </div>
+        <p id="form-status" class="text-sm hidden"></p>
+      </form>
+    </main>
+  </div>
+</Layout>
+
+<script>
+  import { signOut } from "firebase/auth";
+  import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
+  import { requireAuth } from "../lib/auth-guard";
+  import { auth, db } from "../lib/firebase";
+
+  const user = await requireAuth();
+
+  document.getElementById("loading")!.classList.add("hidden");
+  document.getElementById("settings-page")!.classList.remove("hidden");
+
+  document.getElementById("sign-out-btn")!.addEventListener("click", async () => {
+    await signOut(auth);
+    window.location.href = "/login";
+  });
+
+  const settingsForm = document.getElementById("settings-form") as HTMLFormElement;
+  const formStatus = document.getElementById("form-status")!;
+
+  // Dynamic list helpers
+  function addListRow(containerId: string, value = "") {
+    const container = document.getElementById(`${containerId}-list`)!;
+    const row = document.createElement("div");
+    row.className = "flex gap-2";
+    row.innerHTML = `
+      <input type="text" value="${escapeAttr(value)}" class="border border-gray-200 rounded-xl px-3 py-2 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 dynamic-list-input" data-list="${containerId}" />
+      <button type="button" class="text-red-400 hover:text-red-600 text-sm shrink-0 remove-row-btn">&times;</button>
+    `;
+    container.appendChild(row);
+    row.querySelector(".remove-row-btn")!.addEventListener("click", () => row.remove());
+  }
+
+  function getListValues(containerId: string): string[] {
+    return Array.from(document.querySelectorAll(`#${containerId}-list .dynamic-list-input`))
+      .map((el) => (el as HTMLInputElement).value.trim())
+      .filter(Boolean);
+  }
+
+  // FAQ rows
+  function addFaqRow(question = "", answer = "") {
+    const container = document.getElementById("faq-list")!;
+    const row = document.createElement("div");
+    row.className = "flex gap-2";
+    row.innerHTML = `
+      <input type="text" value="${escapeAttr(question)}" placeholder="Question" class="border border-gray-200 rounded-xl px-3 py-2 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 faq-q" />
+      <input type="text" value="${escapeAttr(answer)}" placeholder="Answer" class="border border-gray-200 rounded-xl px-3 py-2 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 faq-a" />
+      <button type="button" class="text-red-400 hover:text-red-600 text-sm shrink-0 remove-row-btn">&times;</button>
+    `;
+    container.appendChild(row);
+    row.querySelector(".remove-row-btn")!.addEventListener("click", () => row.remove());
+  }
+
+  function getFaqValues(): { question: string; answer: string }[] {
+    const rows = document.querySelectorAll("#faq-list > div");
+    return Array.from(rows).map((row) => ({
+      question: (row.querySelector(".faq-q") as HTMLInputElement).value.trim(),
+      answer: (row.querySelector(".faq-a") as HTMLInputElement).value.trim(),
+    })).filter((f) => f.question);
+  }
+
+  // Why Book rows
+  function addWhyRow(title = "", description = "") {
+    const container = document.getElementById("whyBookWithUs-list")!;
+    const row = document.createElement("div");
+    row.className = "flex gap-2";
+    row.innerHTML = `
+      <input type="text" value="${escapeAttr(title)}" placeholder="Title" class="border border-gray-200 rounded-xl px-3 py-2 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 why-title" />
+      <input type="text" value="${escapeAttr(description)}" placeholder="Description" class="border border-gray-200 rounded-xl px-3 py-2 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 why-desc" />
+      <button type="button" class="text-red-400 hover:text-red-600 text-sm shrink-0 remove-row-btn">&times;</button>
+    `;
+    container.appendChild(row);
+    row.querySelector(".remove-row-btn")!.addEventListener("click", () => row.remove());
+  }
+
+  function getWhyValues(): { title: string; description: string }[] {
+    const rows = document.querySelectorAll("#whyBookWithUs-list > div");
+    return Array.from(rows).map((row) => ({
+      title: (row.querySelector(".why-title") as HTMLInputElement).value.trim(),
+      description: (row.querySelector(".why-desc") as HTMLInputElement).value.trim(),
+    })).filter((w) => w.title);
+  }
+
+  function escapeAttr(text: string): string {
+    return text.replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  // Load existing settings
+  async function loadSettings() {
+    try {
+      const docSnap = await getDoc(doc(db, "settings", "tour-defaults"));
+      if (!docSnap.exists()) return;
+      const data = docSnap.data();
+
+      // Simple fields
+      const fields = ["duration", "cancellation", "groupSize", "languages", "pickupLocations"];
+      fields.forEach((f) => {
+        const el = settingsForm.querySelector(`[name="${f}"]`) as HTMLInputElement;
+        if (el && data[f] !== undefined) el.value = String(data[f]);
+      });
+
+      // Contact
+      if (data.contact) {
+        Object.entries(data.contact).forEach(([k, v]) => {
+          const el = settingsForm.querySelector(`[name="contact.${k}"]`) as HTMLInputElement;
+          if (el) el.value = String(v);
+        });
+      }
+
+      // Dynamic lists
+      (data.excluded || []).forEach((v: string) => addListRow("excluded", v));
+      (data.knowBeforeYouGo || []).forEach((v: string) => addListRow("knowBeforeYouGo", v));
+      (data.faq || []).forEach((f: any) => addFaqRow(f.question, f.answer));
+      (data.whyBookWithUs || []).forEach((w: any) => addWhyRow(w.title, w.description));
+    } catch (err) {
+      console.error("Failed to load tour settings:", err);
+    }
+  }
+
+  await loadSettings();
+
+  // Add row buttons
+  document.querySelectorAll("[data-add]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const listId = (btn as HTMLElement).dataset.add!;
+      addListRow(listId);
+    });
+  });
+  document.getElementById("add-faq-btn")!.addEventListener("click", () => addFaqRow());
+  document.getElementById("add-why-btn")!.addEventListener("click", () => addWhyRow());
+
+  // Form submit
+  settingsForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const formData = new FormData(settingsForm);
+
+    const data: any = {
+      duration: formData.get("duration"),
+      cancellation: formData.get("cancellation"),
+      groupSize: formData.get("groupSize"),
+      languages: formData.get("languages"),
+      pickupLocations: formData.get("pickupLocations"),
+      excluded: getListValues("excluded"),
+      knowBeforeYouGo: getListValues("knowBeforeYouGo"),
+      faq: getFaqValues(),
+      whyBookWithUs: getWhyValues(),
+      contact: {
+        name: formData.get("contact.name"),
+        initials: formData.get("contact.initials"),
+        memberSince: formData.get("contact.memberSince"),
+        email: formData.get("contact.email"),
+        website: formData.get("contact.website"),
+        phone: formData.get("contact.phone"),
+      },
+      updatedAt: serverTimestamp(),
+    };
+
+    const saveBtn = document.getElementById("save-btn") as HTMLButtonElement;
+    saveBtn.textContent = "Saving...";
+    saveBtn.disabled = true;
+
+    try {
+      await setDoc(doc(db, "settings", "tour-defaults"), data, { merge: true });
+
+      formStatus.textContent = "Settings saved successfully!";
+      formStatus.className = "text-sm text-green-600";
+      formStatus.classList.remove("hidden");
+      setTimeout(() => formStatus.classList.add("hidden"), 3000);
+    } catch (err: any) {
+      formStatus.textContent = `Error: ${err.message}`;
+      formStatus.className = "text-sm text-red-600";
+      formStatus.classList.remove("hidden");
+    } finally {
+      saveBtn.textContent = "Save Settings";
+      saveBtn.disabled = false;
+    }
+  });
+</script>

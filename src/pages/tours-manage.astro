@@ -14,7 +14,7 @@ import Layout from '../layouts/Layout.astro';
     <header class="bg-white shadow-sm border-b border-gray-100">
       <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
         <a href="/">
-          <img src="/logo.png" alt="Asterion Safari" class="h-10" />
+          <img src="/photo/logo.svg" alt="Asterion Safari" class="h-10" />
         </a>
         <div class="flex items-center gap-4">
           <a href="/dashboard" class="text-sm text-gray-600 hover:text-orange-500 transition-colors">&larr; Back to Dashboard</a>
@@ -99,26 +99,6 @@ import Layout from '../layouts/Layout.astro';
             </div>
           </div>
 
-          <!-- Info fields -->
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-1">Duration</label>
-              <input name="duration" type="text" class="border border-gray-200 rounded-xl px-4 py-2.5 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" placeholder="4,5 Hours" />
-            </div>
-            <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-1">Cancellation</label>
-              <input name="cancellation" type="text" class="border border-gray-200 rounded-xl px-4 py-2.5 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" placeholder="Up to 2 days" />
-            </div>
-            <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-1">Group Size</label>
-              <input name="groupSize" type="text" class="border border-gray-200 rounded-xl px-4 py-2.5 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" placeholder="10 people" />
-            </div>
-            <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-1">Languages</label>
-              <input name="languages" type="text" class="border border-gray-200 rounded-xl px-4 py-2.5 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" placeholder="English" />
-            </div>
-          </div>
-
           <!-- URLs -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -143,14 +123,10 @@ import Layout from '../layouts/Layout.astro';
           </div>
 
           <!-- Order & Active -->
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
             <div>
               <label class="block text-sm font-semibold text-gray-700 mb-1">Order</label>
               <input name="order" type="number" value="1" class="border border-gray-200 rounded-xl px-4 py-2.5 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" />
-            </div>
-            <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-1">Pickup Locations</label>
-              <input name="pickupLocations" type="text" class="border border-gray-200 rounded-xl px-4 py-2.5 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" />
             </div>
             <div class="flex items-center gap-2 pb-1">
               <input name="active" type="checkbox" checked class="w-4 h-4 text-orange-500 rounded border-gray-300 focus:ring-orange-400" />
@@ -184,16 +160,6 @@ import Layout from '../layouts/Layout.astro';
               <div id="included-list" class="space-y-2"></div>
               <button type="button" data-add="included" class="mt-2 text-sm text-orange-500 hover:text-orange-600 cursor-pointer">+ Add item</button>
             </div>
-            <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-1">Excluded</label>
-              <div id="excluded-list" class="space-y-2"></div>
-              <button type="button" data-add="excluded" class="mt-2 text-sm text-orange-500 hover:text-orange-600 cursor-pointer">+ Add item</button>
-            </div>
-            <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-1">Know Before You Go</label>
-              <div id="knowBeforeYouGo-list" class="space-y-2"></div>
-              <button type="button" data-add="knowBeforeYouGo" class="mt-2 text-sm text-orange-500 hover:text-orange-600 cursor-pointer">+ Add item</button>
-            </div>
           </div>
 
           <!-- Images -->
@@ -203,32 +169,6 @@ import Layout from '../layouts/Layout.astro';
             <button type="button" id="add-image-btn" class="mt-2 text-sm text-orange-500 hover:text-orange-600 cursor-pointer">+ Add image</button>
           </div>
 
-          <!-- FAQ -->
-          <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-1">FAQ</label>
-            <div id="faq-list" class="space-y-2"></div>
-            <button type="button" id="add-faq-btn" class="mt-2 text-sm text-orange-500 hover:text-orange-600 cursor-pointer">+ Add FAQ</button>
-          </div>
-
-          <!-- Why Book With Us -->
-          <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-1">Why Book With Us</label>
-            <div id="whyBookWithUs-list" class="space-y-2"></div>
-            <button type="button" id="add-why-btn" class="mt-2 text-sm text-orange-500 hover:text-orange-600 cursor-pointer">+ Add reason</button>
-          </div>
-
-          <!-- Contact info -->
-          <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-2">Contact Info</label>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <input name="contact.name" type="text" placeholder="Name" class="border border-gray-200 rounded-xl px-4 py-2.5 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" />
-              <input name="contact.initials" type="text" placeholder="Initials (e.g. AQ)" class="border border-gray-200 rounded-xl px-4 py-2.5 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" />
-              <input name="contact.memberSince" type="text" placeholder="Member Since" class="border border-gray-200 rounded-xl px-4 py-2.5 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" />
-              <input name="contact.email" type="text" placeholder="Email" class="border border-gray-200 rounded-xl px-4 py-2.5 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" />
-              <input name="contact.website" type="text" placeholder="Website" class="border border-gray-200 rounded-xl px-4 py-2.5 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" />
-              <input name="contact.phone" type="text" placeholder="Phone" class="border border-gray-200 rounded-xl px-4 py-2.5 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" />
-            </div>
-          </div>
 
           <!-- Submit -->
           <div class="flex gap-3 pt-4 border-t border-gray-100">
@@ -397,60 +337,14 @@ import Layout from '../layouts/Layout.astro';
     })).filter((i) => i.src);
   }
 
-  // FAQ rows
-  function addFaqRow(question = "", answer = "") {
-    const container = document.getElementById("faq-list")!;
-    const row = document.createElement("div");
-    row.className = "flex gap-2";
-    row.innerHTML = `
-      <input type="text" value="${escapeAttr(question)}" placeholder="Question" class="border border-gray-200 rounded-xl px-3 py-2 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 faq-q" />
-      <input type="text" value="${escapeAttr(answer)}" placeholder="Answer" class="border border-gray-200 rounded-xl px-3 py-2 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 faq-a" />
-      <button type="button" class="text-red-400 hover:text-red-600 text-sm shrink-0 remove-row-btn">&times;</button>
-    `;
-    container.appendChild(row);
-    row.querySelector(".remove-row-btn")!.addEventListener("click", () => row.remove());
-  }
-
-  function getFaqValues(): { question: string; answer: string }[] {
-    const rows = document.querySelectorAll("#faq-list > div");
-    return Array.from(rows).map((row) => ({
-      question: (row.querySelector(".faq-q") as HTMLInputElement).value.trim(),
-      answer: (row.querySelector(".faq-a") as HTMLInputElement).value.trim(),
-    })).filter((f) => f.question);
-  }
-
-  // Why Book rows
-  function addWhyRow(title = "", description = "") {
-    const container = document.getElementById("whyBookWithUs-list")!;
-    const row = document.createElement("div");
-    row.className = "flex gap-2";
-    row.innerHTML = `
-      <input type="text" value="${escapeAttr(title)}" placeholder="Title" class="border border-gray-200 rounded-xl px-3 py-2 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 why-title" />
-      <input type="text" value="${escapeAttr(description)}" placeholder="Description" class="border border-gray-200 rounded-xl px-3 py-2 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 why-desc" />
-      <button type="button" class="text-red-400 hover:text-red-600 text-sm shrink-0 remove-row-btn">&times;</button>
-    `;
-    container.appendChild(row);
-    row.querySelector(".remove-row-btn")!.addEventListener("click", () => row.remove());
-  }
-
-  function getWhyValues(): { title: string; description: string }[] {
-    const rows = document.querySelectorAll("#whyBookWithUs-list > div");
-    return Array.from(rows).map((row) => ({
-      title: (row.querySelector(".why-title") as HTMLInputElement).value.trim(),
-      description: (row.querySelector(".why-desc") as HTMLInputElement).value.trim(),
-    })).filter((w) => w.title);
-  }
-
   // Populate form
   function populateForm(tour: Tour | null) {
     tourForm.reset();
     // Clear dynamic lists
-    ["highlights", "included", "excluded", "knowBeforeYouGo"].forEach((id) => {
+    ["highlights", "included"].forEach((id) => {
       document.getElementById(`${id}-list`)!.innerHTML = "";
     });
     document.getElementById("images-list")!.innerHTML = "";
-    document.getElementById("faq-list")!.innerHTML = "";
-    document.getElementById("whyBookWithUs-list")!.innerHTML = "";
 
     // Reset card image preview
     cardImagePreview.classList.add("hidden");
@@ -461,7 +355,7 @@ import Layout from '../layouts/Layout.astro';
     if (!tour) return;
 
     // Simple fields
-    const fields = ["title", "shortTitle", "slug", "price", "priceCents", "duration", "cancellation", "groupSize", "languages", "cardImage", "mapEmbedUrl", "order", "pickupLocations", "aboutText", "shortDescription", "longDescription"];
+    const fields = ["title", "shortTitle", "slug", "price", "priceCents", "cardImage", "mapEmbedUrl", "order", "aboutText", "shortDescription", "longDescription"];
     fields.forEach((f) => {
       const el = tourForm.querySelector(`[name="${f}"]`) as HTMLInputElement | HTMLTextAreaElement;
       if (el && tour[f] !== undefined) el.value = String(tour[f]);
@@ -477,22 +371,10 @@ import Layout from '../layouts/Layout.astro';
     const activeEl = tourForm.querySelector('[name="active"]') as HTMLInputElement;
     if (activeEl) activeEl.checked = tour.active !== false;
 
-    // Contact
-    if (tour.contact) {
-      Object.entries(tour.contact).forEach(([k, v]) => {
-        const el = tourForm.querySelector(`[name="contact.${k}"]`) as HTMLInputElement;
-        if (el) el.value = String(v);
-      });
-    }
-
     // Dynamic lists
     (tour.highlights || []).forEach((v: string) => addListRow("highlights", v));
     (tour.included || []).forEach((v: string) => addListRow("included", v));
-    (tour.excluded || []).forEach((v: string) => addListRow("excluded", v));
-    (tour.knowBeforeYouGo || []).forEach((v: string) => addListRow("knowBeforeYouGo", v));
     (tour.images || []).forEach((img: any) => addImageRow(img.src, img.alt));
-    (tour.faq || []).forEach((f: any) => addFaqRow(f.question, f.answer));
-    (tour.whyBookWithUs || []).forEach((w: any) => addWhyRow(w.title, w.description));
   }
 
   // Render list
@@ -576,8 +458,6 @@ import Layout from '../layouts/Layout.astro';
     });
   });
   document.getElementById("add-image-btn")!.addEventListener("click", () => addImageRow());
-  document.getElementById("add-faq-btn")!.addEventListener("click", () => addFaqRow());
-  document.getElementById("add-why-btn")!.addEventListener("click", () => addWhyRow());
 
   // Form submit
   tourForm.addEventListener("submit", async (e) => {
@@ -596,33 +476,16 @@ import Layout from '../layouts/Layout.astro';
       shortTitle: formData.get("shortTitle"),
       price: Number(formData.get("price")),
       priceCents: Number(formData.get("priceCents")),
-      duration: formData.get("duration"),
-      cancellation: formData.get("cancellation"),
-      groupSize: formData.get("groupSize"),
-      languages: formData.get("languages"),
       cardImage: formData.get("cardImage"),
       mapEmbedUrl: formData.get("mapEmbedUrl"),
       order: Number(formData.get("order") || 1),
       active: (tourForm.querySelector('[name="active"]') as HTMLInputElement).checked,
-      pickupLocations: formData.get("pickupLocations"),
       aboutText: formData.get("aboutText"),
       shortDescription: formData.get("shortDescription"),
       longDescription: formData.get("longDescription"),
       highlights: getListValues("highlights"),
       included: getListValues("included"),
-      excluded: getListValues("excluded"),
-      knowBeforeYouGo: getListValues("knowBeforeYouGo"),
       images: getImageValues(),
-      faq: getFaqValues(),
-      whyBookWithUs: getWhyValues(),
-      contact: {
-        name: formData.get("contact.name"),
-        initials: formData.get("contact.initials"),
-        memberSince: formData.get("contact.memberSince"),
-        email: formData.get("contact.email"),
-        website: formData.get("contact.website"),
-        phone: formData.get("contact.phone"),
-      },
       updatedAt: serverTimestamp(),
     };
 

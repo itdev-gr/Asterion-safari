@@ -5,11 +5,17 @@ import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import TourPhotoGallery from '../../components/TourPhotoGallery.astro';
-import { getTourBySlug, getActiveTours } from '../../lib/firebase-server';
+import { getTourBySlug, getActiveTours, getTourDefaults } from '../../lib/firebase-server';
 
 const { slug } = Astro.params;
 
-const tour = await getTourBySlug(slug!) as any;
+const [rawTour, defaults] = await Promise.all([
+  getTourBySlug(slug!),
+  getTourDefaults(),
+]);
+
+// Merge: tour-specific values override shared defaults
+const tour = { ...defaults, ...rawTour } as any;
 
 if (!tour || !tour.active) {
   return Astro.redirect('/404');
@@ -40,8 +46,7 @@ const tourImages = tour.images || [];
       <div class="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-10 items-start">
         <!-- LEFT COLUMN -->
         <div>
-          <h1 class="text-2xl font-bold text-gray-900 mb-1">{tour.title}</h1>
-          <p class="text-sm text-gray-400 mb-6">0 (0 Reviews)</p>
+          <h1 class="text-2xl font-bold text-gray-900 mb-6">{tour.title}</h1>
 
           <!-- Photo gallery -->
           <TourPhotoGallery images={tourImages} />
@@ -227,6 +232,15 @@ const tourImages = tour.images || [];
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+
+          <!-- Free cancellation notice -->
+          <div class="flex items-start gap-3 px-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-teal-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <div>
+              <p class="text-sm font-bold text-gray-900">Free cancellation</p>
+              <p class="text-sm text-gray-500 leading-relaxed">Cancel up to 24 hours in advance for a full refund</p>
             </div>
           </div>
 
