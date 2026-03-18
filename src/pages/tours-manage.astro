@@ -122,6 +122,22 @@ import Layout from '../layouts/Layout.astro';
             </div>
           </div>
 
+          <!-- Duration, Group Size, Pickup Locations -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-1">Duration</label>
+              <input name="duration" type="text" class="border border-gray-200 rounded-xl px-4 py-2.5 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" placeholder="4,5 Hours" />
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-1">Group Size</label>
+              <input name="groupSize" type="text" class="border border-gray-200 rounded-xl px-4 py-2.5 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" placeholder="10 people" />
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-1">Pickup Locations</label>
+              <input name="pickupLocations" type="text" class="border border-gray-200 rounded-xl px-4 py-2.5 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" />
+            </div>
+          </div>
+
           <!-- Order & Active -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
             <div>
@@ -355,7 +371,7 @@ import Layout from '../layouts/Layout.astro';
     if (!tour) return;
 
     // Simple fields
-    const fields = ["title", "shortTitle", "slug", "price", "priceCents", "cardImage", "mapEmbedUrl", "order", "aboutText", "shortDescription", "longDescription"];
+    const fields = ["title", "shortTitle", "slug", "price", "priceCents", "cardImage", "mapEmbedUrl", "order", "aboutText", "shortDescription", "longDescription", "duration", "groupSize", "pickupLocations"];
     fields.forEach((f) => {
       const el = tourForm.querySelector(`[name="${f}"]`) as HTMLInputElement | HTMLTextAreaElement;
       if (el && tour[f] !== undefined) el.value = String(tour[f]);
@@ -483,6 +499,9 @@ import Layout from '../layouts/Layout.astro';
       aboutText: formData.get("aboutText"),
       shortDescription: formData.get("shortDescription"),
       longDescription: formData.get("longDescription"),
+      duration: formData.get("duration"),
+      groupSize: formData.get("groupSize"),
+      pickupLocations: formData.get("pickupLocations"),
       highlights: getListValues("highlights"),
       included: getListValues("included"),
       images: getImageValues(),
