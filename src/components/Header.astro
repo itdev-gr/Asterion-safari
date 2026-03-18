@@ -213,21 +213,38 @@ const tours = await getActiveTours() as any[];
   const header = document.getElementById('main-header');
   const nav = document.getElementById('main-nav');
   const SCROLL_THRESHOLD = 60;
-  const onScroll = () => {
-    const scrolled = window.scrollY > SCROLL_THRESHOLD;
-    if (header) header.classList.toggle('is-scrolled', scrolled);
+  const isHome = window.location.pathname === '/' || window.location.pathname === '/index.html';
+
+  function applyScrolledStyle() {
+    if (header) header.classList.add('is-scrolled');
     if (nav) {
-      if (scrolled) {
-        nav.style.backgroundColor = '';
-        nav.classList.add('bg-white', 'shadow-md', 'is-scrolled');
-      } else {
-        nav.style.backgroundColor = 'transparent';
-        nav.classList.remove('bg-white', 'shadow-md', 'is-scrolled');
-      }
+      nav.style.backgroundColor = '';
+      nav.classList.add('bg-white', 'shadow-md', 'is-scrolled');
     }
-  };
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
+  }
+
+  function applyTransparentStyle() {
+    if (header) header.classList.remove('is-scrolled');
+    if (nav) {
+      nav.style.backgroundColor = 'transparent';
+      nav.classList.remove('bg-white', 'shadow-md', 'is-scrolled');
+    }
+  }
+
+  // Non-home pages always use solid nav
+  if (!isHome) {
+    applyScrolledStyle();
+  } else {
+    const onScroll = () => {
+      if (window.scrollY > SCROLL_THRESHOLD) {
+        applyScrolledStyle();
+      } else {
+        applyTransparentStyle();
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
 
   // Move mobile menu overlay to end of body so it's always on top (fixes About & other pages)
   const overlayEl = document.getElementById('mobile-menu-overlay');
