@@ -2,7 +2,7 @@ export const prerender = false;
 
 import type { APIRoute } from "astro";
 import Stripe from "stripe";
-import { adminDb } from "../../lib/firebase-admin";
+import { getTourBySlug } from "../../lib/firebase-server";
 
 export const POST: APIRoute = async ({ request }) => {
   const secretKey = process.env.STRIPE_SECRET_KEY;
@@ -18,11 +18,10 @@ export const POST: APIRoute = async ({ request }) => {
     const { tourSlug, sharedCount, soloCount, guestName, date } = body;
 
     // Fetch tour from Firestore for pricing
-    const tourDoc = await adminDb.collection("tours").doc(tourSlug).get();
-    if (!tourDoc.exists) {
+    const tourData = await getTourBySlug(tourSlug) as any;
+    if (!tourData) {
       return new Response(JSON.stringify({ error: "Tour not found" }), { status: 404 });
     }
-    const tourData = tourDoc.data()!;
     const pricePerUnit = tourData.priceCents;
     const tourName = tourData.title;
 

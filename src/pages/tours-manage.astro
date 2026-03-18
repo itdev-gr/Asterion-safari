@@ -122,8 +122,19 @@ import Layout from '../layouts/Layout.astro';
           <!-- URLs -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-1">Card Image URL</label>
-              <input name="cardImage" type="text" class="border border-gray-200 rounded-xl px-4 py-2.5 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" />
+              <label class="block text-sm font-semibold text-gray-700 mb-1">Card Image</label>
+              <input name="cardImage" type="hidden" />
+              <div class="flex items-center gap-3">
+                <label class="cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium px-4 py-2.5 rounded-xl transition-colors">
+                  Choose File
+                  <input type="file" accept="image/*" id="card-image-file" class="hidden" />
+                </label>
+                <span id="card-image-name" class="text-xs text-gray-400 truncate"></span>
+              </div>
+              <div id="card-image-preview" class="mt-2 hidden">
+                <img id="card-image-thumb" src="" alt="Preview" class="w-32 h-20 object-cover rounded-lg border border-gray-200" />
+              </div>
+              <p id="card-image-status" class="text-xs text-gray-400 mt-1 hidden"></p>
             </div>
             <div>
               <label class="block text-sm font-semibold text-gray-700 mb-1">Map Embed URL</label>
@@ -240,6 +251,7 @@ import Layout from '../layouts/Layout.astro';
   import { collection, doc, setDoc, deleteDoc, onSnapshot, orderBy, query, serverTimestamp } from "firebase/firestore";
   import { requireAuth } from "../lib/auth-guard";
   import { auth, db } from "../lib/firebase";
+  import { uploadImage } from "../lib/upload-image";
 
   const user = await requireAuth();
 
@@ -249,6 +261,32 @@ import Layout from '../layouts/Layout.astro';
   document.getElementById("sign-out-btn")!.addEventListener("click", async () => {
     await signOut(auth);
     window.location.href = "/login";
+  });
+
+  // Card image file upload
+  const cardImageFile = document.getElementById("card-image-file") as HTMLInputElement;
+  const cardImageInput = document.querySelector('[name="cardImage"]') as HTMLInputElement;
+  const cardImagePreview = document.getElementById("card-image-preview")!;
+  const cardImageThumb = document.getElementById("card-image-thumb") as HTMLImageElement;
+  const cardImageStatus = document.getElementById("card-image-status")!;
+  const cardImageName = document.getElementById("card-image-name")!;
+
+  cardImageFile.addEventListener("change", async () => {
+    const file = cardImageFile.files?.[0];
+    if (!file) return;
+    cardImageName.textContent = file.name;
+    cardImageStatus.textContent = "Uploading...";
+    cardImageStatus.classList.remove("hidden");
+    try {
+      const url = await uploadImage(file, "tours");
+      cardImageInput.value = url;
+      cardImageThumb.src = url;
+      cardImagePreview.classList.remove("hidden");
+      cardImageStatus.textContent = "Uploaded!";
+      setTimeout(() => cardImageStatus.classList.add("hidden"), 2000);
+    } catch (err: any) {
+      cardImageStatus.textContent = `Error: ${err.message}`;
+    }
   });
 
   // DOM refs
@@ -312,14 +350,43 @@ import Layout from '../layouts/Layout.astro';
   function addImageRow(src = "", alt = "") {
     const container = document.getElementById("images-list")!;
     const row = document.createElement("div");
-    row.className = "flex gap-2";
+    row.className = "flex gap-2 items-center";
     row.innerHTML = `
-      <input type="text" value="${escapeAttr(src)}" placeholder="Image URL" class="border border-gray-200 rounded-xl px-3 py-2 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 img-src" />
+      <input type="hidden" value="${escapeAttr(src)}" class="img-src" />
+      <label class="cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-medium px-3 py-2 rounded-lg transition-colors shrink-0">
+        ${src ? "Replace" : "Upload"}
+        <input type="file" accept="image/*" class="hidden img-file-input" />
+      </label>
+      <img src="${escapeAttr(src)}" alt="" class="w-16 h-10 object-cover rounded border border-gray-200 shrink-0 img-thumb ${src ? "" : "hidden"}" />
+      <span class="text-xs text-gray-400 img-upload-status"></span>
       <input type="text" value="${escapeAttr(alt)}" placeholder="Alt text" class="border border-gray-200 rounded-xl px-3 py-2 w-40 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 img-alt" />
       <button type="button" class="text-red-400 hover:text-red-600 text-sm shrink-0 remove-row-btn">&times;</button>
     `;
     container.appendChild(row);
     row.querySelector(".remove-row-btn")!.addEventListener("click", () => row.remove());
+
+    // File upload handler
+    const fileInput = row.querySelector(".img-file-input") as HTMLInputElement;
+    fileInput.addEventListener("change", async () => {
+      const file = fileInput.files?.[0];
+      if (!file) return;
+      const status = row.querySelector(".img-upload-status") as HTMLElement;
+      const thumb = row.querySelector(".img-thumb") as HTMLImageElement;
+      const hiddenInput = row.querySelector(".img-src") as HTMLInputElement;
+      const label = row.querySelector("label") as HTMLLabelElement;
+      status.textContent = "Uploading...";
+      try {
+        const { uploadImage } = await import("../lib/upload-image");
+        const url = await uploadImage(file, "tours");
+        hiddenInput.value = url;
+        thumb.src = url;
+        thumb.classList.remove("hidden");
+        status.textContent = "";
+        label.childNodes[0].textContent = "Replace ";
+      } catch (err: any) {
+        status.textContent = `Error: ${err.message}`;
+      }
+    });
   }
 
   function getImageValues(): { src: string; alt: string }[] {
@@ -385,6 +452,12 @@ import Layout from '../layouts/Layout.astro';
     document.getElementById("faq-list")!.innerHTML = "";
     document.getElementById("whyBookWithUs-list")!.innerHTML = "";
 
+    // Reset card image preview
+    cardImagePreview.classList.add("hidden");
+    cardImageThumb.src = "";
+    cardImageName.textContent = "";
+    cardImageStatus.classList.add("hidden");
+
     if (!tour) return;
 
     // Simple fields
@@ -393,6 +466,12 @@ import Layout from '../layouts/Layout.astro';
       const el = tourForm.querySelector(`[name="${f}"]`) as HTMLInputElement | HTMLTextAreaElement;
       if (el && tour[f] !== undefined) el.value = String(tour[f]);
     });
+
+    // Show card image preview if exists
+    if (tour.cardImage) {
+      cardImageThumb.src = tour.cardImage;
+      cardImagePreview.classList.remove("hidden");
+    }
 
     // Active checkbox
     const activeEl = tourForm.querySelector('[name="active"]') as HTMLInputElement;

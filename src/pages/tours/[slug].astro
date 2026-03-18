@@ -5,28 +5,19 @@ import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import TourPhotoGallery from '../../components/TourPhotoGallery.astro';
-import { adminDb } from '../../lib/firebase-admin';
+import { getTourBySlug, getActiveTours } from '../../lib/firebase-server';
 
 const { slug } = Astro.params;
 
-const doc = await adminDb.collection('tours').doc(slug!).get();
+const tour = await getTourBySlug(slug!) as any;
 
-if (!doc.exists || !doc.data()?.active) {
+if (!tour || !tour.active) {
   return Astro.redirect('/404');
 }
 
-const tour = { slug: doc.id, ...doc.data() } as any;
-
 // Fetch other active tours for "Explore other options"
-const othersSnap = await adminDb
-  .collection('tours')
-  .where('active', '==', true)
-  .orderBy('order', 'asc')
-  .get();
-
-const otherTours = othersSnap.docs
-  .filter((d) => d.id !== slug)
-  .map((d) => ({ slug: d.id, ...d.data() })) as any[];
+const allTours = await getActiveTours() as any[];
+const otherTours = allTours.filter((t) => t.slug !== slug);
 
 const tourSlug = tour.slug;
 const tourPrice = tour.price;
