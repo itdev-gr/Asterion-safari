@@ -4,12 +4,14 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import TourPhotoGallery from '../components/TourPhotoGallery.astro';
 
+const SB_TOURS = 'https://tkmbbqqdolhdodcrrlhs.supabase.co/storage/v1/object/public/images/tours';
+const SB_GALLERY = 'https://tkmbbqqdolhdodcrrlhs.supabase.co/storage/v1/object/public/images/gallery';
 const tourImages = [
-  { src: 'https://asterionsafari.com/wp-content/uploads/2024/03/IMG-20230623-WA0002-2.jpg', alt: 'Quad Safari Tour' },
-  { src: 'https://asterionsafari.com/wp-content/uploads/2024/03/IMG-20230625-WA0005.jpg', alt: 'Quad Safari' },
-  { src: 'https://asterionsafari.com/wp-content/uploads/2024/03/IMG-20230529-WA0001.jpg', alt: 'Quad Safari' },
-  { src: 'https://asterionsafari.com/wp-content/uploads/2024/03/IMG-20230623-WA0005.jpg', alt: 'Quad Safari' },
-  { src: 'https://asterionsafari.com/wp-content/uploads/2024/03/IMG-20230523-WA0000.jpg', alt: 'Quad Safari' },
+  { src: `${SB_TOURS}/day-tour-1.jpg`, alt: 'Quad Safari Tour' },
+  { src: `${SB_GALLERY}/gallery2.webp`, alt: 'Quad Safari' },
+  { src: `${SB_GALLERY}/gallery5.webp`, alt: 'Quad Safari' },
+  { src: `${SB_GALLERY}/gallery7.webp`, alt: 'Quad Safari' },
+  { src: `${SB_GALLERY}/gallery9.webp`, alt: 'Quad Safari' },
 ];
 ---
 
@@ -301,7 +303,7 @@ const tourImages = [
         <h2 class="text-xl font-bold text-gray-900 mb-6" data-i18n="tourPage.exploreOtherOptions">Explore other options</h2>
         <div class="flex flex-wrap gap-6">
           <a href="/evening-tour" class="block max-w-sm bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden hover:shadow-lg transition-shadow">
-            <img src="https://asterionsafari.com/wp-content/uploads/2024/03/WhatsApp-Image-2023-12-28-at-13.22.46_3eefa10c-450x300.jpg" alt="Evening Tour" class="w-full h-48 object-cover" />
+            <img src="https://tkmbbqqdolhdodcrrlhs.supabase.co/storage/v1/object/public/images/tours/evening-tour-card.jpg" alt="Evening Tour" class="w-full h-48 object-cover" />
             <div class="p-4">
               <h3 class="font-bold text-gray-900 mb-2" data-i18n="activities.eveningTourTitle">Off-Road Quad Safari Evening Tour with Hotel Transfer</h3>
               <p class="text-orange-500 font-bold mb-1" data-i18n="activities.fromPriceEvening">From έΓυ130,00</p>
