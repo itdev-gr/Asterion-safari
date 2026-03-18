@@ -1,4 +1,7 @@
-﻿---
+---
+import { getActiveTours } from '../lib/firebase-server';
+
+const tours = await getActiveTours() as any[];
 ---
 
 <section id="activities" class="py-10 sm:py-16" style="background-color: #f8f8f8">
@@ -7,56 +10,33 @@
       Explore Crete Off-Road: Quad Bike Safari Adventures
     </h2>
     <div class="flex flex-col gap-6 sm:gap-8">
-      <article class="bg-white rounded-xl shadow-md overflow-hidden flex flex-col md:flex-row min-w-0">
-        <div class="w-full md:w-[40%] shrink-0 flex-shrink-0">
-          <img
-            src="https://tkmbbqqdolhdodcrrlhs.supabase.co/storage/v1/object/public/images/tours/evening-tour-card.jpg"
-            alt="Evening Tour"
-            class="w-full h-48 sm:h-56 md:h-full md:min-h-[220px] object-cover rounded-t-xl md:rounded-l-xl md:rounded-tr-none"
-          />
-        </div>
-        <div class="p-4 sm:p-5 md:p-6 flex-1 flex flex-col md:flex-row md:items-stretch gap-3 sm:gap-4 min-w-0">
-          <div class="flex-1 min-w-0">
-            <h3 class="font-semibold text-dark text-base sm:text-lg mb-1 sm:mb-2" data-i18n="activities.eveningTourTitle">Off-Road Quad Safari Evening Tour with Hotel Transfer</h3>
-            <p class="text-gray-500 text-sm mb-3 line-clamp-2" data-i18n="activities.eveningTourDescShort">Discover the mountains of Crete on a guided quad biking tour. Go offroad and ride along dusty trails...</p>
-            <p class="text-gray-500 text-sm flex items-center gap-1.5">
-              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-              <span data-i18n="activities.hours">4,5 Hours</span>
-            </p>
+      {tours.map((tour) => (
+        <article class="bg-white rounded-xl shadow-md overflow-hidden flex flex-col md:flex-row min-w-0">
+          <div class="w-full md:w-[40%] shrink-0 flex-shrink-0">
+            <img
+              src={tour.cardImage}
+              alt={tour.shortTitle || tour.title}
+              class="w-full h-48 sm:h-56 md:h-full md:min-h-[220px] object-cover rounded-t-xl md:rounded-l-xl md:rounded-tr-none"
+            />
           </div>
-          <div class="border-t md:border-t-0 md:border-l border-gray-200 pl-0 md:pl-5 flex flex-row md:flex-col flex-wrap justify-between md:justify-end items-center gap-2 pt-3 md:pt-0">
-            <p class="font-semibold text-dark" data-i18n="activities.fromPriceEvening">From έΓυ130,00</p>
-            <a href="/evening-tour" class="inline-block bg-primary text-white font-medium rounded-lg px-4 sm:px-5 py-2 sm:py-2.5 hover:opacity-90 transition-opacity text-center w-fit text-sm sm:text-base" data-i18n="activities.viewDetails">
-              View details
-            </a>
+          <div class="p-4 sm:p-5 md:p-6 flex-1 flex flex-col md:flex-row md:items-stretch gap-3 sm:gap-4 min-w-0">
+            <div class="flex-1 min-w-0">
+              <h3 class="font-semibold text-dark text-base sm:text-lg mb-1 sm:mb-2">{tour.shortTitle || tour.title}</h3>
+              <p class="text-gray-500 text-sm mb-3 line-clamp-2">{tour.shortDescription || ''}</p>
+              <p class="text-gray-500 text-sm flex items-center gap-1.5">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <span>{tour.duration}</span>
+              </p>
+            </div>
+            <div class="border-t md:border-t-0 md:border-l border-gray-200 pl-0 md:pl-5 flex flex-row md:flex-col flex-wrap justify-between md:justify-end items-center gap-2 pt-3 md:pt-0">
+              <p class="font-semibold text-dark">From &euro;{tour.price?.toLocaleString('de-DE', { minimumFractionDigits: 2 })}</p>
+              <a href={`/tours/${tour.slug}`} class="inline-block bg-primary text-white font-medium rounded-lg px-4 sm:px-5 py-2 sm:py-2.5 hover:opacity-90 transition-opacity text-center w-fit text-sm sm:text-base" data-i18n="activities.viewDetails">
+                View details
+              </a>
+            </div>
           </div>
-        </div>
-      </article>
-      <article class="bg-white rounded-xl shadow-md overflow-hidden flex flex-col md:flex-row min-w-0">
-        <div class="w-full md:w-[40%] shrink-0 flex-shrink-0">
-          <img
-            src="https://tkmbbqqdolhdodcrrlhs.supabase.co/storage/v1/object/public/images/tours/day-tour-card.jpg"
-            alt="Day Tour"
-            class="w-full h-48 sm:h-56 md:h-full md:min-h-[220px] object-cover rounded-t-xl md:rounded-l-xl md:rounded-tr-none"
-          />
-        </div>
-        <div class="p-4 sm:p-5 md:p-6 flex-1 flex flex-col md:flex-row md:items-stretch gap-3 sm:gap-4 min-w-0">
-          <div class="flex-1 min-w-0">
-            <h3 class="font-semibold text-dark text-base sm:text-lg mb-1 sm:mb-2" data-i18n="activities.dayTourTitle">Quad Safari Off-Road Tour with Hotel Transfer</h3>
-            <p class="text-gray-500 text-sm mb-2 sm:mb-3 line-clamp-2" data-i18n="activities.dayTourDescShort">Embark on an unforgettable guided quad tour experience and speed through the Cretan countryside. Get to know...</p>
-            <p class="text-gray-500 text-sm flex items-center gap-1.5">
-              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-              <span data-i18n="activities.hours">4,5 Hours</span>
-            </p>
-          </div>
-          <div class="border-t md:border-t-0 md:border-l border-gray-200 pl-0 md:pl-5 flex flex-row md:flex-col flex-wrap justify-between md:justify-end items-center gap-2 pt-3 md:pt-0">
-            <p class="font-semibold text-dark" data-i18n="activities.fromPriceDay">From έΓυ160,00</p>
-            <a href="/day-tour" class="inline-block bg-primary text-white font-medium rounded-lg px-4 sm:px-5 py-2 sm:py-2.5 hover:opacity-90 transition-opacity text-center w-fit text-sm sm:text-base" data-i18n="activities.viewDetails">
-              View details
-            </a>
-          </div>
-        </div>
-      </article>
+        </article>
+      ))}
     </div>
   </div>
 </section>
