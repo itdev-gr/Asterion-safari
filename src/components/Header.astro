@@ -19,7 +19,7 @@ import LanguageToggle from './LanguageToggle.astro';
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between min-h-[100px] max-lg:min-h-[72px] py-0.5 overflow-visible">
         <a href="/" class="flex items-center shrink-0 -ml-[96px] lg:-ml-[96px] max-lg:ml-0">
-          <img src="/photo/Asterion%20Safari-01.png" alt="Asterion Safari - Quad Biking Adventures" class="h-[120px] w-auto object-contain max-lg:h-20" />
+          <img src="/photo/logo.webp" alt="Asterion Safari - Quad Biking Adventures" width="120" height="120" class="h-[120px] w-auto object-contain max-lg:h-20" />
         </a>
 
         <div class="hidden lg:flex flex-1 justify-center items-center gap-8">
@@ -73,6 +73,7 @@ import LanguageToggle from './LanguageToggle.astro';
     id="mobile-menu-overlay"
     class="fixed inset-0 z-[100] lg:hidden opacity-0 pointer-events-none transition-opacity duration-300 ease-out overflow-visible"
     aria-hidden="true"
+    inert
   >
     <div id="mobile-menu-backdrop" class="absolute inset-0 bg-black/50 backdrop-blur-sm z-0"></div>
     <div
@@ -81,7 +82,7 @@ import LanguageToggle from './LanguageToggle.astro';
     >
       <div class="flex items-center justify-between px-4 sm:px-6 h-16 min-h-16 border-b border-gray-200 shrink-0 bg-white">
         <a href="/" class="flex items-center" id="mobile-menu-logo-link">
-          <img src="/photo/Asterion%20Safari-01.png" alt="Asterion Safari - Quad Biking Adventures" class="h-20 w-auto object-contain" />
+          <img src="/photo/logo.webp" alt="Asterion Safari - Quad Biking Adventures" width="80" height="80" class="h-20 w-auto object-contain" />
         </a>
         <div class="w-11 shrink-0" aria-hidden="true"></div>
       </div>
@@ -237,6 +238,7 @@ import LanguageToggle from './LanguageToggle.astro';
     document.body.style.overflow = 'hidden';
     overlay.classList.remove('opacity-0', 'pointer-events-none');
     overlay.setAttribute('aria-hidden', 'false');
+    overlay.removeAttribute('inert');
     panel.classList.remove('translate-y-[-100%]');
     panel.classList.add('translate-y-0');
     iconOpen?.classList.add('hidden');
@@ -256,6 +258,7 @@ import LanguageToggle from './LanguageToggle.astro';
     panel.classList.add('translate-y-[-100%]');
     overlay.classList.add('opacity-0', 'pointer-events-none');
     overlay.setAttribute('aria-hidden', 'true');
+    overlay.setAttribute('inert', '');
     document.body.style.overflow = '';
     iconOpen?.classList.remove('hidden');
     iconClose?.classList.add('hidden');

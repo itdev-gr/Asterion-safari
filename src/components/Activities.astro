@@ -16,6 +16,9 @@ const tours = await getActiveTours() as any[];
             <img
               src={tour.cardImage}
               alt={tour.shortTitle || tour.title}
+              loading="lazy"
+              width="800"
+              height="600"
               class="w-full h-48 sm:h-56 md:h-full md:min-h-[220px] object-cover rounded-t-xl md:rounded-l-xl md:rounded-tr-none"
             />
           </div>

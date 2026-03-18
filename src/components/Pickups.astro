@@ -29,37 +29,42 @@ const areas = [
 </section>
 
 <script>
-  import gsap from 'gsap';
-  import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-  gsap.registerPlugin(ScrollTrigger);
-
   const section = document.querySelector('.pickups-section');
-  const title = document.querySelector('.pickups-title');
-  const subtitle = document.querySelector('.pickups-subtitle');
-  const items = document.querySelectorAll('.pickup-item');
+  if (section) {
+    const observer = new IntersectionObserver(async ([entry]) => {
+      if (entry.isIntersecting) {
+        observer.disconnect();
+        const { default: gsap } = await import('gsap');
+        const { ScrollTrigger } = await import('gsap/ScrollTrigger');
+        gsap.registerPlugin(ScrollTrigger);
 
-  if (section && items.length) {
-    const toAnimate = [title, subtitle, ...items].filter(Boolean);
-    gsap.set(toAnimate, { opacity: 0, y: 24 });
+        const title = section.querySelector('.pickups-title');
+        const subtitle = section.querySelector('.pickups-subtitle');
+        const items = section.querySelectorAll('.pickup-item');
 
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: section,
-        start: 'top 85%',
-        end: 'top 50%',
-        toggleActions: 'play none none none',
-      },
-    });
+        const toAnimate = [title, subtitle, ...items].filter(Boolean);
+        gsap.set(toAnimate, { opacity: 0, y: 24 });
 
-    tl.to(title, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' });
-    if (subtitle) tl.to(subtitle, { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' }, '-=0.2');
-    tl.to(items, {
-      opacity: 1,
-      y: 0,
-      duration: 0.4,
-      stagger: { amount: 0.35, from: 'start' },
-      ease: 'power2.out',
-    }, '-=0.1');
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: section,
+            start: 'top 85%',
+            end: 'top 50%',
+            toggleActions: 'play none none none',
+          },
+        });
+
+        tl.to(title, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' });
+        if (subtitle) tl.to(subtitle, { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' }, '-=0.2');
+        tl.to(items, {
+          opacity: 1,
+          y: 0,
+          duration: 0.4,
+          stagger: { amount: 0.35, from: 'start' },
+          ease: 'power2.out',
+        }, '-=0.1');
+      }
+    }, { rootMargin: '200px' });
+    observer.observe(section);
   }
 </script>

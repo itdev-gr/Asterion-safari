@@ -9,15 +9,13 @@ const heroPoster = 'https://tkmbbqqdolhdodcrrlhs.supabase.co/storage/v1/object/p
       muted
       loop
       playsinline
-      preload="auto"
+      preload="none"
       poster={heroPoster}
+      width="1920"
+      height="1080"
     >
       <source
-        src="/photo/aerial-view-of-atv-team-driving-slow-through-the-f-2025-12-17-03-40-13-utc.mov"
-        type="video/quicktime"
-      />
-      <source
-        src="/photo/aerial-view-of-atv-team-driving-slow-through-the-f-2025-12-17-03-40-13-utc.mov"
+        src="/photo/aerial-view-of-atv-team-driving-slow-through-the-f-2025-12-17-03-40-13-utc-compressed.mp4"
         type="video/mp4"
       />
     </video>
@@ -59,23 +57,23 @@ const heroPoster = 'https://tkmbbqqdolhdodcrrlhs.supabase.co/storage/v1/object/p
   <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
     <div class="flex flex-col items-center text-center p-6 sm:p-8 rounded-xl bg-white/95 shadow-sm border border-gray-100">
       <div class="w-16 h-16 sm:w-20 sm:h-20 mb-4 flex items-center justify-center">
-        <img src="/self-driving.png" alt="" class="w-full h-full object-contain" aria-hidden="true" />
+        <img src="/self-driving.png" alt="" width="80" height="80" class="w-full h-full object-contain" aria-hidden="true" />
       </div>
-      <h3 class="font-semibold text-primary text-lg sm:text-xl mb-1" data-i18n="hero.selfDriving">Self Driving</h3>
+      <p class="font-semibold text-primary text-lg sm:text-xl mb-1" data-i18n="hero.selfDriving">Self Driving</p>
       <p class="text-gray-600 text-sm sm:text-base" data-i18n="hero.automaticQuads">Automatic 4x4 Quad Bikes</p>
     </div>
     <div class="flex flex-col items-center text-center p-6 sm:p-8 rounded-xl bg-white/95 shadow-sm border border-gray-100">
       <div class="w-16 h-16 sm:w-20 sm:h-20 mb-4 flex items-center justify-center">
-        <img src="/go-off-road.png" alt="" class="w-full h-full object-contain" aria-hidden="true" />
+        <img src="/go-off-road.png" alt="" width="80" height="80" class="w-full h-full object-contain" aria-hidden="true" />
       </div>
-      <h3 class="font-semibold text-primary text-lg sm:text-xl mb-1" data-i18n="hero.goOffRoad">Go off-road</h3>
+      <p class="font-semibold text-primary text-lg sm:text-xl mb-1" data-i18n="hero.goOffRoad">Go off-road</p>
       <p class="text-gray-600 text-sm sm:text-base" data-i18n="hero.exploreCreteOffRoad">Explore Creta off road</p>
     </div>
     <div class="flex flex-col items-center text-center p-6 sm:p-8 rounded-xl bg-white/95 shadow-sm border border-gray-100">
       <div class="w-16 h-16 sm:w-20 sm:h-20 mb-4 flex items-center justify-center">
-        <img src="/Free-Cancelation.png" alt="" class="w-full h-full object-contain" aria-hidden="true" />
+        <img src="/Free-Cancelation.png" alt="" width="80" height="80" class="w-full h-full object-contain" aria-hidden="true" />
       </div>
-      <h3 class="font-semibold text-primary text-sm sm:text-base mb-1 whitespace-nowrap" data-i18n="hero.freeCancelation">Free Cancelation & Refund</h3>
+      <p class="font-semibold text-primary text-sm sm:text-base mb-1 whitespace-nowrap" data-i18n="hero.freeCancelation">Free Cancelation & Refund</p>
       <p class="text-gray-600 text-xs sm:text-sm" data-i18n="hero.termsApply">Terms & Conditions apply</p>
     </div>
   </div>
