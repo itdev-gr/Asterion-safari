@@ -81,7 +81,7 @@ export const translations = {
       reviews: '0 (0 Reviews)',
       duration: 'Duration',
       cancellation: 'Cancellation',
-      upTo2Days: 'Up to 2 days',
+      upTo24Hours: 'Up to 24 Hours',
       groupSize: 'Group Size',
       people10: '10 people',
       languages: 'Languages',

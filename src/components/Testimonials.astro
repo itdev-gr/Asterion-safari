@@ -1,11 +1,11 @@
 ---
 const reviews = [
-  { initials: 'AQ', name: 'Asterion Quads', text: 'Best safari in malia hersonissos kyriakos was very friendly and understandable' },
-  { initials: 'SK', name: 'Steffen Katzschmann', text: 'It was a wonderful time from start to finish. All the employees were very nice and accommodating.' },
-  { initials: 'HD', name: 'Harry D.', text: 'Today Kostas took us on a 3-hour trip, magical landscapes, challenging and full of adrenaline.' },
-  { initials: 'BB', name: 'boldi bonis', text: 'We took part in the best quad tour of our lives. Beautiful landscapes, mountain peaks.' },
-  { initials: 'AR', name: 'Audrey Rachowiak', text: 'It was a very great experience to visit lassithi, very nice guide! Visit an olive oil and pottery factory.' },
-  { initials: 'JC', name: 'J C', text: 'We had a great time on the quad tour. You get an all day experience including on road and off road quad biking.' },
+  { initials: 'S', name: 'Sandra', country: 'United Kingdom', date: 'November 3, 2025', text: 'Great mix of adventure and local sights. The guides were friendly and made everyone feel safe. The quad ride was fun and a bit dusty, with beautiful views and interesting village stops. A fun and well-run experience overall.' },
+  { initials: 'L', name: 'Laura', country: 'France', date: 'March 1, 2026', text: 'Perfect, a big thank you to our guide' },
+  { initials: 'B', name: 'Beeke', country: 'Germany', date: 'November 1, 2025', text: 'Everything went smoothly, a great vacation experience, and the guide was very helpful. It was definitely worth it.' },
+  { initials: 'M', name: 'Max', country: 'Germany', date: 'October 29, 2025', text: 'We had a great experience. The route was very scenic passing by some lovely villages in the back of the island, with some fun off-road tracks and we had the chance to try some local olive oil. All in all, a five star experience.' },
+  { initials: 'M', name: 'Mat', country: 'United Kingdom', date: 'October 28, 2025', text: 'Really good way to see the local sights. Great fun, guide was excellent, he took lots of photos for us and was good fun. Quad bikes were easy to ride.' },
+  { initials: 'L', name: 'Loreley', country: 'Germany', date: 'October 25, 2025', text: 'An unbelievably great tour with the best guide we could have gotten. The ride was exciting with varied stops in small villages and an olive oil factory. We also got a tour and tasting on site. The day was our best in Crete so far, and we will definitely book this activity again on our next stay. Highly recommended!!!' },
 ];
 const maxIndex = 3; // 6 cards, 3 visible => positions 0,1,2,3
 ---
@@ -64,8 +64,8 @@ const maxIndex = 3; // 6 cards, 3 visible => positions 0,1,2,3
                         {r.initials}
                       </div>
                       <div class="min-w-0">
-                        <p class="font-bold text-dark truncate">{r.name}</p>
-                        <p class="text-gray-500 text-xs">3 years</p>
+                        <p class="font-bold text-dark truncate">{r.name} – {r.country}</p>
+                        <p class="text-gray-500 text-xs">{r.date}</p>
                       </div>
                     </div>
                     <span class="shrink-0 text-xs font-medium" style="color:#4285F4" aria-hidden="true">G</span>
