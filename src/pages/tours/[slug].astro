@@ -98,8 +98,23 @@ const tourImages = tour.images || [];
             We offer free pick up from: {tour.pickupLocations}
           </p>
 
+          {tour.mapEmbedUrl && (
+            <>
+              <h2 class="text-xl font-bold text-gray-900 mb-4">Tour Route</h2>
+              <iframe
+                src={tour.mapEmbedUrl}
+                width="100%"
+                height="400"
+                style="border:0; border-radius: 12px;"
+                allowfullscreen=""
+                loading="lazy"
+                title={`${tour.title} Route Map`}
+              />
+            </>
+          )}
+
           <!-- Highlights -->
-          <h2 class="text-xl font-bold text-gray-900 mb-3">Highlights</h2>
+          <h2 class="text-xl font-bold text-gray-900 mb-3 mt-8">Highlights</h2>
           <ul class="space-y-2 mb-8">
             {(tour.highlights || []).map((h: string) => (
               <li class="flex items-start gap-2 text-gray-700"><span class="text-orange-500 font-bold">&#10003;</span> {h}</li>
@@ -141,20 +156,6 @@ const tourImages = tour.images || [];
             ))}
           </div>
 
-          {tour.mapEmbedUrl && (
-            <>
-              <h2 class="text-xl font-bold text-gray-900 mb-4 mt-8">Tour Route</h2>
-              <iframe
-                src={tour.mapEmbedUrl}
-                width="100%"
-                height="400"
-                style="border:0; border-radius: 12px;"
-                allowfullscreen=""
-                loading="lazy"
-                title={`${tour.title} Route Map`}
-              />
-            </>
-          )}
         </div>
 
         <!-- RIGHT COLUMN - Sidebar -->
