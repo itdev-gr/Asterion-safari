@@ -1,0 +1,452 @@
+---
+export const prerender = false;
+
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { getTourBySlug, getTourDefaults } from '../../lib/firebase-server';
+
+const url = new URL(Astro.request.url);
+const tourSlug = url.searchParams.get('tourSlug') || '';
+const sharedCount = Math.max(0, parseInt(url.searchParams.get('sharedCount') || '0', 10) || 0);
+const soloCount = Math.max(0, parseInt(url.searchParams.get('soloCount') || '0', 10) || 0);
+const guestName = (url.searchParams.get('guestName') || '').trim();
+const selectedDate = (url.searchParams.get('date') || '').trim();
+
+if (!tourSlug || (sharedCount + soloCount) === 0 || !guestName || !selectedDate) {
+  return Astro.redirect(tourSlug ? `/tours/${tourSlug}` : '/');
+}
+
+const [rawTour, defaults] = await Promise.all([
+  getTourBySlug(tourSlug),
+  getTourDefaults(),
+]);
+
+if (!rawTour) {
+  return Astro.redirect('/');
+}
+
+const tour = { ...defaults, ...rawTour } as any;
+const extras: any[] = Array.isArray(tour.extras) ? tour.extras.filter((e: any) => e && e.active !== false && e.id && e.title) : [];
+const tourPriceCents: number = Number(tour.priceCents ?? Math.round(Number(tour.price ?? 0) * 100));
+const tourImage: string = tour.cardImage || (Array.isArray(tour.images) && tour.images[0]?.src) || '';
+const backUrl = `/tours/${tourSlug}`;
+---
+
+<Layout title={`Customize your booking - ${tour.title}`}>
+  <Header />
+  <main class="bg-[#f8f9fa] min-h-screen">
+    <div class="max-w-6xl mx-auto px-6 py-3">
+      <p class="text-sm text-gray-500">
+        <a href={backUrl} class="hover:text-orange-500">&larr; Back to {tour.title}</a>
+      </p>
+    </div>
+
+    <section class="max-w-6xl mx-auto px-6 pb-12">
+      <div class="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8 items-start">
+        <!-- LEFT COLUMN -->
+        <div class="space-y-6">
+          <!-- Tour mini-card -->
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex items-center gap-4">
+            {tourImage && (
+              <img src={tourImage} alt={tour.title} class="w-20 h-20 object-cover rounded-xl flex-shrink-0" />
+            )}
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-bold text-gray-900 leading-tight">{tour.title}</p>
+              <p class="text-xs text-gray-500 mt-1">{selectedDate} &middot; {sharedCount + soloCount} {sharedCount + soloCount === 1 ? 'participant' : 'participants'}</p>
+            </div>
+          </div>
+
+          <!-- Pickup -->
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <h2 class="text-lg font-bold text-gray-900 mb-4">Do you know where you want to be picked up?</h2>
+            <div class="space-y-3">
+              <label class="flex items-start gap-3 cursor-pointer border border-gray-200 rounded-xl p-3 hover:border-orange-300 transition-colors">
+                <input type="radio" name="pickup-choice" value="yes" class="mt-1 accent-orange-500" />
+                <div class="flex-1">
+                  <p class="text-sm font-semibold text-gray-900">Yes, I can add it now</p>
+                  <input id="pickup-address" type="text" placeholder="Hotel name or address" class="mt-2 border border-gray-200 rounded-xl px-3 py-2 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 hidden" />
+                </div>
+              </label>
+              <label class="flex items-start gap-3 cursor-pointer border border-gray-200 rounded-xl p-3 hover:border-orange-300 transition-colors">
+                <input type="radio" name="pickup-choice" value="no" class="mt-1 accent-orange-500" checked />
+                <div>
+                  <p class="text-sm font-semibold text-gray-900">I don't know yet</p>
+                  <p class="text-xs text-gray-500 mt-0.5">We'll reach out by email to arrange pickup.</p>
+                </div>
+              </label>
+            </div>
+            {tour.pickupLocations && (
+              <p class="text-xs text-gray-500 mt-3">Free pickup from: {tour.pickupLocations}</p>
+            )}
+          </div>
+
+          <!-- Extras -->
+          {extras.length > 0 && (
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+              <h2 class="text-lg font-bold text-gray-900 mb-2">Do you want to add any extras?</h2>
+              <p class="text-xs text-gray-500 mb-4">All extras are optional. Vehicle upgrades are capped at the number of quads in your booking.</p>
+              <div id="extras-container" class="space-y-3">
+                {extras.map((ex: any) => (
+                  <div class="extra-row border border-gray-200 rounded-xl p-4 flex items-center justify-between gap-4"
+                       data-id={ex.id}
+                       data-price-cents={String(ex.priceCents)}
+                       data-unit={ex.unit}
+                       data-kids-free={ex.kidsFree ? '1' : '0'}
+                       data-upgrade-group={ex.upgradeGroup || ''}>
+                    <div class="flex-1 min-w-0">
+                      <p class="text-sm font-semibold text-gray-900">{ex.title}</p>
+                      {ex.description && <p class="text-xs text-gray-500 mt-0.5 leading-relaxed">{ex.description}</p>}
+                      <p class="text-sm font-bold text-orange-500 mt-1">
+                        &euro;{(ex.priceCents / 100).toLocaleString('de-DE', { minimumFractionDigits: 2 })}
+                        <span class="text-xs font-normal text-gray-500 ml-1">per {ex.unit === 'adult' ? 'adult' : ex.unit}</span>
+                        {ex.kidsFree && <span class="text-xs font-normal text-gray-500 ml-1">&middot; kids free</span>}
+                      </p>
+                    </div>
+                    {ex.unit === 'adult' ? (
+                      <button type="button" class="extra-toggle border border-gray-300 rounded-full px-4 py-1.5 text-sm font-semibold text-gray-600 hover:border-orange-500 hover:text-orange-500 transition-colors flex-shrink-0" data-active="0">Add</button>
+                    ) : (
+                      <div class="flex items-center gap-3 flex-shrink-0">
+                        <button type="button" class="extra-minus w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-500 hover:border-orange-500 hover:text-orange-500 transition-colors text-lg leading-none">&minus;</button>
+                        <span class="extra-count text-sm font-semibold w-4 text-center">0</span>
+                        <button type="button" class="extra-plus w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-500 hover:border-orange-500 hover:text-orange-500 transition-colors text-lg leading-none">+</button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <p id="upgrade-cap-notice" class="hidden mt-3 text-xs text-orange-600">Vehicle upgrades can't exceed the number of quads in your booking.</p>
+            </div>
+          )}
+
+          <!-- Important info -->
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <h2 class="text-lg font-bold text-gray-900 mb-4">Important information</h2>
+            <ul class="text-sm text-gray-600 space-y-2 list-disc list-inside">
+              <li>1 adult = 1 quad assigned. 2 adults share 1 quad. 3 adults get 2 quads. For 1 quad per person (solo), make a separate booking per adult.</li>
+              <li>Drivers must hold a valid car driver's license and carry a physical ID card.</li>
+              <li>Children over 6 years old can share the quad with an adult.</li>
+              <li>The activity provider reserves the right to change routes and stops for safety or weather reasons.</li>
+              <li>Couples over 180 kg combined are recommended to upgrade to a Premium or Exclusive vehicle for better comfort and performance.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- RIGHT SIDEBAR -->
+        <aside class="space-y-6 lg:sticky lg:top-24 lg:self-start">
+          <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+            <p class="text-sm font-bold text-gray-900 leading-tight mb-3">{tour.title}</p>
+
+            <div class="space-y-3 text-sm py-3 border-t border-b border-gray-100 mb-4">
+              <div class="flex items-start gap-2">
+                <span class="text-gray-400">&#128197;</span>
+                <div>
+                  <p class="text-gray-500 text-xs">Date</p>
+                  <p class="font-semibold text-gray-900">{selectedDate}</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-2">
+                <span class="text-gray-400">&#128100;</span>
+                <div>
+                  <p class="text-gray-500 text-xs">Participants</p>
+                  <p class="font-semibold text-gray-900">
+                    {sharedCount > 0 && <span>{sharedCount} shared</span>}
+                    {sharedCount > 0 && soloCount > 0 && <span>, </span>}
+                    {soloCount > 0 && <span>{soloCount} solo</span>}
+                  </p>
+                  <p class="text-xs text-gray-500 mt-0.5">Guest: {guestName}</p>
+                </div>
+              </div>
+              <a href={backUrl} class="inline-block text-xs text-orange-500 hover:text-orange-600 font-semibold">Change date or participants</a>
+            </div>
+
+            <!-- Kids counter -->
+            <div class="flex items-center justify-between border border-gray-200 rounded-xl p-3 mb-4">
+              <div>
+                <p class="text-sm font-semibold text-gray-900">Children</p>
+                <p class="text-xs text-gray-500">Under 12 (free for Kera Monastery ticket).</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <button type="button" id="kids-minus" class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-500 hover:border-orange-500 hover:text-orange-500 transition-colors text-lg leading-none">&minus;</button>
+                <span id="kids-count" class="text-sm font-semibold w-4 text-center">0</span>
+                <button type="button" id="kids-plus" class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-500 hover:border-orange-500 hover:text-orange-500 transition-colors text-lg leading-none">+</button>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-2 mb-4 text-sm text-teal-700">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <p>Free cancellation up to 24 hours before the tour.</p>
+            </div>
+
+            <div class="border-t border-gray-100 pt-4">
+              <div class="flex items-baseline justify-between">
+                <span class="text-base font-bold text-gray-900">Total</span>
+                <div class="text-right">
+                  <span id="total-original" class="hidden text-sm text-gray-400 line-through mr-2">&euro;0,00</span>
+                  <span id="total-final" class="text-lg font-bold text-gray-900">&euro;0,00</span>
+                </div>
+              </div>
+              <p id="discount-line" class="hidden text-xs text-orange-500 font-semibold text-right mt-0.5"></p>
+              <p class="text-xs text-gray-500 mt-2">All taxes and fees included.</p>
+            </div>
+
+            <button id="proceed-btn" type="button" class="mt-5 w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-full transition-colors">
+              Proceed to Payment
+            </button>
+            <p id="proceed-status" class="mt-3 text-sm hidden"></p>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Layout>
+
+<div id="checkout-data"
+     data-tour-slug={tourSlug}
+     data-shared-count={String(sharedCount)}
+     data-solo-count={String(soloCount)}
+     data-guest-name={guestName}
+     data-date={selectedDate}
+     data-tour-price-cents={String(tourPriceCents)}
+     class="hidden"></div>
+
+<script>
+  import { collection, getDocs, query, where } from "firebase/firestore";
+  import { db } from "../../lib/firebase";
+  import { findDiscountForDate, type Discount } from "../../lib/discounts";
+
+  const dataEl = document.getElementById('checkout-data')!;
+  const tourSlug = dataEl.dataset.tourSlug!;
+  const sharedCount = Number(dataEl.dataset.sharedCount);
+  const soloCount = Number(dataEl.dataset.soloCount);
+  const guestName = dataEl.dataset.guestName!;
+  const date = dataEl.dataset.date!;
+  const tourPriceCents = Number(dataEl.dataset.tourPriceCents);
+  const quadCount = sharedCount + soloCount;
+
+  let kidsCount = 0;
+  const extraQuantities: Record<string, number> = {};
+  let activeDiscounts: Discount[] = [];
+
+  function formatEuros(cents: number): string {
+    return `\u20AC${(cents / 100).toLocaleString('de-DE', { minimumFractionDigits: 2 })}`;
+  }
+
+  const adultCount = sharedCount * 2 + soloCount;
+
+  function extraLineCents(row: HTMLElement): number {
+    const id = row.dataset.id!;
+    const qty = extraQuantities[id] || 0;
+    if (qty <= 0) return 0;
+    const priceCents = Number(row.dataset.priceCents);
+    const unit = row.dataset.unit;
+    const kidsFree = row.dataset.kidsFree === '1';
+    if (unit === 'adult') {
+      const billable = kidsFree ? adultCount : adultCount + kidsCount;
+      return priceCents * billable;
+    }
+    return priceCents * qty;
+  }
+
+  function getExtrasTotalCents(): number {
+    let total = 0;
+    document.querySelectorAll<HTMLElement>('.extra-row').forEach((row) => {
+      total += extraLineCents(row);
+    });
+    return total;
+  }
+
+  function vehicleUpgradeQty(): number {
+    let qty = 0;
+    document.querySelectorAll<HTMLElement>('.extra-row').forEach((row) => {
+      if (row.dataset.upgradeGroup === 'vehicle') {
+        qty += extraQuantities[row.dataset.id!] || 0;
+      }
+    });
+    return qty;
+  }
+
+  function updateUpgradeCapNotice() {
+    const notice = document.getElementById('upgrade-cap-notice');
+    if (!notice) return;
+    if (vehicleUpgradeQty() > quadCount) {
+      notice.classList.remove('hidden');
+    } else {
+      notice.classList.add('hidden');
+    }
+  }
+
+  function recompute() {
+    const baseCents = quadCount * tourPriceCents;
+    const discount = findDiscountForDate(date, activeDiscounts);
+    const discountCents = discount ? Math.floor((baseCents * discount.percent) / 100) : 0;
+    const discountedBase = baseCents - discountCents;
+    const extrasCents = getExtrasTotalCents();
+    const totalCents = discountedBase + extrasCents;
+
+    const finalEl = document.getElementById('total-final')!;
+    const origEl = document.getElementById('total-original')!;
+    const lineEl = document.getElementById('discount-line')!;
+
+    finalEl.textContent = formatEuros(totalCents);
+    if (discount && discountCents > 0) {
+      origEl.textContent = formatEuros(baseCents + extrasCents);
+      origEl.classList.remove('hidden');
+      lineEl.textContent = `\u2212${discount.percent}% ${discount.name} on base price`;
+      lineEl.classList.remove('hidden');
+    } else {
+      origEl.classList.add('hidden');
+      lineEl.classList.add('hidden');
+    }
+    updateUpgradeCapNotice();
+  }
+
+  // Extras counters (and toggles for adult-unit extras)
+  document.querySelectorAll<HTMLElement>('.extra-row').forEach((row) => {
+    const id = row.dataset.id!;
+    extraQuantities[id] = 0;
+
+    const toggle = row.querySelector('.extra-toggle') as HTMLButtonElement | null;
+    if (toggle) {
+      toggle.addEventListener('click', () => {
+        const active = toggle.dataset.active === '1';
+        if (active) {
+          extraQuantities[id] = 0;
+          toggle.dataset.active = '0';
+          toggle.textContent = 'Add';
+          toggle.classList.remove('bg-orange-500', 'text-white', 'border-orange-500');
+          toggle.classList.add('text-gray-600');
+        } else {
+          extraQuantities[id] = 1;
+          toggle.dataset.active = '1';
+          toggle.textContent = 'Added';
+          toggle.classList.add('bg-orange-500', 'text-white', 'border-orange-500');
+          toggle.classList.remove('text-gray-600');
+        }
+        recompute();
+      });
+      return;
+    }
+
+    const countEl = row.querySelector('.extra-count') as HTMLElement;
+    const plus = row.querySelector('.extra-plus') as HTMLButtonElement;
+    const minus = row.querySelector('.extra-minus') as HTMLButtonElement;
+
+    plus.addEventListener('click', () => {
+      const unit = row.dataset.unit;
+      const group = row.dataset.upgradeGroup;
+      if (unit === 'vehicle' && group === 'vehicle') {
+        if (vehicleUpgradeQty() >= quadCount) {
+          updateUpgradeCapNotice();
+          return;
+        }
+      }
+      if (unit === 'camera' && extraQuantities[id] >= Math.max(quadCount, 1) * 2) {
+        return;
+      }
+      extraQuantities[id] = (extraQuantities[id] || 0) + 1;
+      countEl.textContent = String(extraQuantities[id]);
+      recompute();
+    });
+    minus.addEventListener('click', () => {
+      if ((extraQuantities[id] || 0) > 0) {
+        extraQuantities[id]--;
+        countEl.textContent = String(extraQuantities[id]);
+        recompute();
+      }
+    });
+  });
+
+  // Kids counter
+  document.getElementById('kids-plus')?.addEventListener('click', () => {
+    kidsCount++;
+    document.getElementById('kids-count')!.textContent = String(kidsCount);
+    recompute();
+  });
+  document.getElementById('kids-minus')?.addEventListener('click', () => {
+    if (kidsCount > 0) {
+      kidsCount--;
+      document.getElementById('kids-count')!.textContent = String(kidsCount);
+      recompute();
+    }
+  });
+
+  // Pickup radios
+  document.querySelectorAll<HTMLInputElement>('input[name="pickup-choice"]').forEach((radio) => {
+    radio.addEventListener('change', () => {
+      const addressInput = document.getElementById('pickup-address') as HTMLInputElement;
+      if (radio.value === 'yes' && radio.checked) {
+        addressInput.classList.remove('hidden');
+      } else {
+        addressInput.classList.add('hidden');
+      }
+    });
+  });
+
+  // Load discounts then initial render
+  (async () => {
+    try {
+      const snap = await getDocs(query(collection(db, "discounts"), where("active", "==", true)));
+      activeDiscounts = snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })) as Discount[];
+    } catch (err) {
+      console.warn("Failed to load discounts", err);
+    }
+    recompute();
+  })();
+
+  // Proceed to payment
+  document.getElementById('proceed-btn')?.addEventListener('click', async () => {
+    if (vehicleUpgradeQty() > quadCount) {
+      updateUpgradeCapNotice();
+      return;
+    }
+    const btn = document.getElementById('proceed-btn') as HTMLButtonElement;
+    const status = document.getElementById('proceed-status')!;
+    btn.textContent = 'Processing...';
+    btn.disabled = true;
+    status.classList.add('hidden');
+
+    const pickupChoice = (document.querySelector('input[name="pickup-choice"]:checked') as HTMLInputElement)?.value || 'no';
+    const pickupAddress = pickupChoice === 'yes'
+      ? (document.getElementById('pickup-address') as HTMLInputElement).value.trim()
+      : '';
+
+    const extras = Object.entries(extraQuantities)
+      .filter(([, q]) => q > 0)
+      .map(([id, quantity]) => ({ id, quantity }));
+
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tourSlug,
+          sharedCount,
+          soloCount,
+          guestName,
+          date,
+          kidsCount,
+          extras,
+          pickup: pickupChoice === 'yes' ? pickupAddress : '',
+        }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        status.textContent = data.error || 'Something went wrong. Please try again.';
+        status.className = 'mt-3 text-sm text-red-600';
+        status.classList.remove('hidden');
+        btn.textContent = 'Proceed to Payment';
+        btn.disabled = false;
+      }
+    } catch {
+      status.textContent = 'Network error. Please try again.';
+      status.className = 'mt-3 text-sm text-red-600';
+      status.classList.remove('hidden');
+      btn.textContent = 'Proceed to Payment';
+      btn.disabled = false;
+    }
+  });
+</script>

@@ -185,6 +185,14 @@ import Layout from '../layouts/Layout.astro';
             <button type="button" id="add-image-btn" class="mt-2 text-sm text-orange-500 hover:text-orange-600 cursor-pointer">+ Add image</button>
           </div>
 
+          <!-- Extras / Add-ons -->
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Extras / Add-ons</label>
+            <p class="text-xs text-gray-500 mb-2">Offered on the checkout extras page. Price is in cents (e.g. 1500 = €15.00). Unit determines how quantity scales: person = × all participants; adult = × adults only; vehicle = × quads; camera = × cameras.</p>
+            <div id="extras-list" class="space-y-2"></div>
+            <button type="button" id="add-extra-btn" class="mt-2 text-sm text-orange-500 hover:text-orange-600 cursor-pointer">+ Add extra</button>
+          </div>
+
 
           <!-- Submit -->
           <div class="flex gap-3 pt-4 border-t border-gray-100">
@@ -353,6 +361,54 @@ import Layout from '../layouts/Layout.astro';
     })).filter((i) => i.src);
   }
 
+  // Extras rows
+  function addExtraRow(extra: any = {}) {
+    const container = document.getElementById("extras-list")!;
+    const row = document.createElement("div");
+    row.className = "border border-gray-200 rounded-xl p-3 grid grid-cols-1 md:grid-cols-12 gap-2 items-start";
+    const unit = extra.unit || "person";
+    row.innerHTML = `
+      <input type="text" value="${escapeAttr(extra.id ?? "")}" placeholder="id (e.g. lunch)" class="md:col-span-2 border border-gray-200 rounded-xl px-3 py-2 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 extra-id" />
+      <input type="text" value="${escapeAttr(extra.title ?? "")}" placeholder="Title" class="md:col-span-3 border border-gray-200 rounded-xl px-3 py-2 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 extra-title" />
+      <input type="text" value="${escapeAttr(extra.description ?? "")}" placeholder="Description" class="md:col-span-3 border border-gray-200 rounded-xl px-3 py-2 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 extra-desc" />
+      <input type="number" value="${Number(extra.priceCents ?? 0)}" placeholder="Price (cents)" min="0" class="md:col-span-1 border border-gray-200 rounded-xl px-3 py-2 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 extra-price" />
+      <select class="md:col-span-1 border border-gray-200 rounded-xl px-2 py-2 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 extra-unit">
+        <option value="person" ${unit === "person" ? "selected" : ""}>person</option>
+        <option value="adult" ${unit === "adult" ? "selected" : ""}>adult</option>
+        <option value="vehicle" ${unit === "vehicle" ? "selected" : ""}>vehicle</option>
+        <option value="camera" ${unit === "camera" ? "selected" : ""}>camera</option>
+      </select>
+      <input type="text" value="${escapeAttr(extra.upgradeGroup ?? "")}" placeholder="group (opt)" class="md:col-span-1 border border-gray-200 rounded-xl px-3 py-2 w-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 extra-group" />
+      <label class="md:col-span-1 flex items-center gap-1 text-xs text-gray-600">
+        <input type="checkbox" ${extra.kidsFree ? "checked" : ""} class="w-4 h-4 text-orange-500 rounded border-gray-300 focus:ring-orange-400 extra-kidsfree" />
+        kids free
+      </label>
+      <button type="button" class="justify-self-end text-red-400 hover:text-red-600 text-sm shrink-0 remove-row-btn">&times;</button>
+    `;
+    container.appendChild(row);
+    row.querySelector(".remove-row-btn")!.addEventListener("click", () => row.remove());
+  }
+
+  function getExtraValues(): any[] {
+    const rows = document.querySelectorAll("#extras-list > div");
+    return Array.from(rows).map((row) => {
+      const priceCents = Number((row.querySelector(".extra-price") as HTMLInputElement).value) || 0;
+      const unit = (row.querySelector(".extra-unit") as HTMLSelectElement).value as "person" | "adult" | "vehicle" | "camera";
+      const upgradeGroup = (row.querySelector(".extra-group") as HTMLInputElement).value.trim();
+      const obj: any = {
+        id: (row.querySelector(".extra-id") as HTMLInputElement).value.trim(),
+        title: (row.querySelector(".extra-title") as HTMLInputElement).value.trim(),
+        description: (row.querySelector(".extra-desc") as HTMLInputElement).value.trim(),
+        priceCents,
+        unit,
+        kidsFree: (row.querySelector(".extra-kidsfree") as HTMLInputElement).checked,
+        active: true,
+      };
+      if (upgradeGroup) obj.upgradeGroup = upgradeGroup;
+      return obj;
+    }).filter((e) => e.id && e.title);
+  }
+
   // Populate form
   function populateForm(tour: Tour | null) {
     tourForm.reset();
@@ -361,6 +417,7 @@ import Layout from '../layouts/Layout.astro';
       document.getElementById(`${id}-list`)!.innerHTML = "";
     });
     document.getElementById("images-list")!.innerHTML = "";
+    document.getElementById("extras-list")!.innerHTML = "";
 
     // Reset card image preview
     cardImagePreview.classList.add("hidden");
@@ -391,6 +448,7 @@ import Layout from '../layouts/Layout.astro';
     (tour.highlights || []).forEach((v: string) => addListRow("highlights", v));
     (tour.included || []).forEach((v: string) => addListRow("included", v));
     (tour.images || []).forEach((img: any) => addImageRow(img.src, img.alt));
+    (tour.extras || []).forEach((ex: any) => addExtraRow(ex));
   }
 
   // Render list
@@ -474,6 +532,7 @@ import Layout from '../layouts/Layout.astro';
     });
   });
   document.getElementById("add-image-btn")!.addEventListener("click", () => addImageRow());
+  document.getElementById("add-extra-btn")!.addEventListener("click", () => addExtraRow());
 
   // Form submit
   tourForm.addEventListener("submit", async (e) => {
@@ -505,6 +564,7 @@ import Layout from '../layouts/Layout.astro';
       highlights: getListValues("highlights"),
       included: getListValues("included"),
       images: getImageValues(),
+      extras: getExtraValues(),
       updatedAt: serverTimestamp(),
     };
 

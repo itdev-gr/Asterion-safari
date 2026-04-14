@@ -1,0 +1,25 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout title="Page not found - Asterion Safari">
+  <Header />
+  <main class="min-h-[60vh] flex items-center justify-center bg-[#f8f9fa]">
+    <div class="text-center max-w-md mx-auto px-6">
+      <p class="text-orange-500 font-bold text-sm tracking-widest mb-4">404</p>
+      <h1 class="text-3xl font-bold text-gray-900 mb-3">Page not found</h1>
+      <p class="text-gray-500 mb-8">The page you're looking for doesn't exist or has moved. Let's get you back to the adventures.</p>
+      <div class="flex flex-wrap justify-center gap-3">
+        <a href="/" class="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-3 rounded-full transition-colors inline-block">
+          Back to Home
+        </a>
+        <a href="/tours/day-tour" class="border border-gray-300 hover:border-orange-500 text-gray-700 hover:text-orange-500 font-semibold px-8 py-3 rounded-full transition-colors inline-block">
+          See Tours
+        </a>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Layout>

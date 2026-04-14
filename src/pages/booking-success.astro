@@ -32,11 +32,17 @@ import Footer from '../components/Footer.astro';
     const sessionId = params.get("session_id");
     if (!sessionId) return;
 
-    // Check if this session was already saved
-    const existing = await getDocs(
-      query(collection(db, "bookings"), where("stripeSessionId", "==", sessionId))
-    );
-    if (!existing.empty) return;
+    // Best-effort dedup: bookings read may be denied for anonymous users,
+    // in which case we proceed and accept a small chance of a duplicate
+    // rather than losing the booking entirely.
+    try {
+      const existing = await getDocs(
+        query(collection(db, "bookings"), where("stripeSessionId", "==", sessionId))
+      );
+      if (!existing.empty) return;
+    } catch {
+      // ignore — fall through to addDoc
+    }
 
     // Verify session with Stripe via our API
     const res = await fetch("/api/verify-session", {
@@ -49,19 +55,30 @@ import Footer from '../components/Footer.astro';
 
     const data = await res.json();
 
-    await addDoc(collection(db, "bookings"), {
-      tour: data.tour,
-      guestName: data.guestName,
-      date: data.date,
-      sharedCount: data.sharedCount,
-      soloCount: data.soloCount,
-      email: data.email,
-      amount: data.amount,
-      currency: data.currency,
-      status: "paid",
-      stripeSessionId: data.stripeSessionId,
-      createdAt: Timestamp.now(),
-    });
+    try {
+      await addDoc(collection(db, "bookings"), {
+        tour: data.tour,
+        guestName: data.guestName,
+        date: data.date,
+        sharedCount: data.sharedCount,
+        soloCount: data.soloCount,
+        kidsCount: data.kidsCount ?? 0,
+        pickup: data.pickup ?? "",
+        extras: Array.isArray(data.extras) ? data.extras : [],
+        discountPercent: data.discountPercent ?? 0,
+        discountName: data.discountName ?? "",
+        baseAmount: data.baseAmount ?? 0,
+        discountedBaseAmount: data.discountedBaseAmount ?? 0,
+        email: data.email,
+        amount: data.amount,
+        currency: data.currency,
+        status: "paid",
+        stripeSessionId: data.stripeSessionId,
+        createdAt: Timestamp.now(),
+      });
+    } catch (err) {
+      console.error("Failed to save booking:", err);
+    }
   }
 
   saveBooking();

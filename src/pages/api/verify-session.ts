@@ -25,12 +25,37 @@ export const POST: APIRoute = async ({ request }) => {
 
     const metadata = session.metadata || {};
 
+    let extras: Array<{ id: string; quantity: number; lineTotalCents: number }> = [];
+    try {
+      const parsed = metadata.extrasSummary ? JSON.parse(metadata.extrasSummary) : [];
+      if (Array.isArray(parsed)) {
+        extras = parsed.map((e: any) => ({
+          id: String(e?.i ?? e?.id ?? ""),
+          quantity: Number(e?.q ?? 0) || 0,
+          lineTotalCents: Number(e?.c ?? 0) || 0,
+        })).filter((e) => e.id);
+      }
+    } catch {
+      extras = [];
+    }
+
+    const baseCents = Number(metadata.baseCents) || 0;
+    const discountedBaseCents = Number(metadata.discountedBaseCents) || baseCents;
+    const discountPercent = Number(metadata.discountPercent) || 0;
+
     return new Response(JSON.stringify({
       tour: metadata.tour || "Unknown",
       guestName: metadata.guestName || "Unknown",
       date: metadata.date || "Unknown",
       sharedCount: Number(metadata.sharedCount) || 0,
       soloCount: Number(metadata.soloCount) || 0,
+      kidsCount: Number(metadata.kidsCount) || 0,
+      pickup: metadata.pickup || "",
+      discountPercent,
+      discountName: metadata.discountName || "",
+      baseAmount: baseCents / 100,
+      discountedBaseAmount: discountedBaseCents / 100,
+      extras,
       email: session.customer_details?.email || "",
       amount: (session.amount_total || 0) / 100,
       currency: session.currency || "eur",

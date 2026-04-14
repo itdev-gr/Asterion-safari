@@ -27,6 +27,7 @@ const otherTours = allTours.filter((t) => t.slug !== slug);
 
 const tourSlug = tour.slug;
 const tourPrice = tour.price;
+const tourPriceCents = tour.priceCents ?? Math.round(Number(tour.price) * 100);
 const tourTitle = tour.title;
 const tourImages = tour.images || [];
 ---
@@ -209,7 +210,11 @@ const tourImages = tour.images || [];
 
             <div class="flex justify-between items-center py-4 border-t border-gray-100 mb-4">
               <span class="font-bold text-base">Total</span>
-              <span class="font-bold text-base" id="total-price">&euro;0,00</span>
+              <div class="text-right">
+                <span id="total-price-original" class="hidden text-sm text-gray-400 line-through mr-2">&euro;0,00</span>
+                <span class="font-bold text-base" id="total-price">&euro;0,00</span>
+                <p id="discount-note" class="hidden text-xs text-orange-500 font-semibold mt-0.5"></p>
+              </div>
             </div>
 
             <button type="button" class="book-now-btn bg-orange-500 hover:bg-orange-600 text-white font-semibold w-full py-3 rounded-full transition-colors mb-2">
@@ -312,16 +317,30 @@ const tourImages = tour.images || [];
   <Footer />
 </Layout>
 
-<div id="tour-data" data-slug={tourSlug} data-price={String(tourPrice)} data-title={tourTitle} class="hidden"></div>
+<div id="tour-data" data-slug={tourSlug} data-price={String(tourPrice)} data-price-cents={String(tourPriceCents)} data-title={tourTitle} class="hidden"></div>
 
 <script>
-  import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+  import { collection, addDoc, getDocs, query, where, serverTimestamp } from "firebase/firestore";
   import { db } from "../../lib/firebase";
+  import { findDiscountForDate, type Discount } from "../../lib/discounts";
 
   const tourDataEl = document.getElementById('tour-data')!;
   const tourSlug = tourDataEl.dataset.slug!;
   const tourPrice = Number(tourDataEl.dataset.price);
+  const tourPriceCents = Number(tourDataEl.dataset.priceCents);
   const tourTitle = tourDataEl.dataset.title!;
+
+  let activeDiscounts: Discount[] = [];
+  (async () => {
+    try {
+      const snap = await getDocs(query(collection(db, "discounts"), where("active", "==", true)));
+      activeDiscounts = snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })) as Discount[];
+      renderBookingCalendar();
+      updateTotal();
+    } catch (err) {
+      console.warn("Failed to load discounts", err);
+    }
+  })();
 
   document.querySelectorAll('.faq-question').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -332,14 +351,47 @@ const tourImages = tour.images || [];
     });
   });
 
-  const PRICE = tourPrice;
   let sharedCount = 0;
   let soloCount = 0;
 
+  function formatEuros(cents: number): string {
+    return `\u20AC${(cents / 100).toLocaleString('de-DE', { minimumFractionDigits: 2 })}`;
+  }
+
+  function currentSelectedDate(): string {
+    return document.getElementById('selected-date')?.textContent?.trim() || '';
+  }
+
   function updateTotal() {
-    const total = (sharedCount + soloCount) * PRICE;
-    const el = document.getElementById('total-price');
-    if (el) el.textContent = total === 0 ? '\u20AC0,00' : `\u20AC${total.toLocaleString('de-DE', { minimumFractionDigits: 2 })}`;
+    const units = sharedCount + soloCount;
+    const baseCents = units * tourPriceCents;
+    const date = currentSelectedDate();
+    const discount = date && date !== 'Select a date' ? findDiscountForDate(date, activeDiscounts) : null;
+
+    const totalEl = document.getElementById('total-price')!;
+    const originalEl = document.getElementById('total-price-original')!;
+    const noteEl = document.getElementById('discount-note')!;
+
+    if (units === 0) {
+      totalEl.textContent = '\u20AC0,00';
+      originalEl.classList.add('hidden');
+      noteEl.classList.add('hidden');
+      return;
+    }
+
+    if (discount) {
+      const discCents = Math.floor((baseCents * discount.percent) / 100);
+      const finalCents = baseCents - discCents;
+      totalEl.textContent = formatEuros(finalCents);
+      originalEl.textContent = formatEuros(baseCents);
+      originalEl.classList.remove('hidden');
+      noteEl.textContent = `\u2212${discount.percent}% ${discount.name}`;
+      noteEl.classList.remove('hidden');
+    } else {
+      totalEl.textContent = formatEuros(baseCents);
+      originalEl.classList.add('hidden');
+      noteEl.classList.add('hidden');
+    }
   }
 
   document.getElementById('shared-plus')?.addEventListener('click', () => {
@@ -371,7 +423,7 @@ const tourImages = tour.images || [];
     }
   });
 
-  document.querySelector('.book-now-btn')?.addEventListener('click', async () => {
+  document.querySelector('.book-now-btn')?.addEventListener('click', () => {
     if (sharedCount + soloCount === 0) {
       document.getElementById('min-notice')?.classList.remove('hidden');
       return;
@@ -383,30 +435,20 @@ const tourImages = tour.images || [];
       return;
     }
 
-    const btn = document.querySelector('.book-now-btn') as HTMLButtonElement;
-    btn.textContent = 'Processing...';
-    btn.disabled = true;
-
-    try {
-      const date = document.getElementById('selected-date')?.textContent || '';
-      const res = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tourSlug, sharedCount, soloCount, guestName, date }),
-      });
-      const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        alert(data.error || 'Something went wrong. Please try again.');
-        btn.textContent = 'Book now';
-        btn.disabled = false;
-      }
-    } catch {
-      alert('Something went wrong. Please try again.');
-      btn.textContent = 'Book now';
-      btn.disabled = false;
+    const date = currentSelectedDate();
+    if (!date || date === 'Select a date') {
+      document.getElementById('booking-date-btn')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
     }
+
+    const params = new URLSearchParams({
+      tourSlug,
+      sharedCount: String(sharedCount),
+      soloCount: String(soloCount),
+      guestName,
+      date,
+    });
+    window.location.href = `/checkout/extras?${params.toString()}`;
   });
 
   document.querySelector('.min-notice-close')?.addEventListener('click', () => {
@@ -467,10 +509,14 @@ const tourImages = tour.images || [];
         const dateStr = formatDate(d, m, y);
         const isStart = calStartDate === dateStr;
         const isToday = d === new Date().getDate() && m === new Date().getMonth() && y === new Date().getFullYear();
-        let cls = 'text-center text-sm py-1.5 rounded cursor-pointer hover:bg-orange-100 transition-colors';
+        const disc = findDiscountForDate(dateStr, activeDiscounts);
+        let cls = 'relative text-center text-sm py-1.5 rounded cursor-pointer hover:bg-orange-100 transition-colors';
         if (isStart) cls += ' bg-orange-500 text-white hover:bg-orange-600';
+        else if (disc) cls += ' bg-orange-50 text-orange-600 font-semibold';
         else if (isToday) cls += ' border border-orange-400';
-        html += '<div class="booking-cal-day ' + cls + '" data-date="' + dateStr + '">' + d + '</div>';
+        const dot = disc && !isStart ? '<span class="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-orange-500"></span>' : '';
+        const title = disc ? ` title="${disc.percent}% off – ${disc.name}"` : '';
+        html += '<div class="booking-cal-day ' + cls + '" data-date="' + dateStr + '"' + title + '>' + d + dot + '</div>';
       }
       html += '</div></div>';
       container.innerHTML += html;
@@ -483,6 +529,7 @@ const tourImages = tour.images || [];
         if (dateLabel) dateLabel.textContent = calStartDate;
         bookingCalDropdown?.classList.add('hidden');
         renderBookingCalendar();
+        updateTotal();
       });
     });
   }
