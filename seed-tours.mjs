@@ -19,7 +19,7 @@ const db = getFirestore();
 const defaultExtras = [
   {
     id: "lunch",
-    title: "Taste of Crete – Local Meal Experience",
+    title: "Local Lunch on the Island",
     description: "Traditional Cretan meal (main dish, salad, bread & drink) at a local tavern after the ride.",
     priceCents: 1500,
     unit: "person",
@@ -36,8 +36,8 @@ const defaultExtras = [
   },
   {
     id: "premium-upgrade",
-    title: "Premium Upgrade – 450 cc ATV",
-    description: "Upgrade for more power, comfort, and better handling.",
+    title: "Premium Vehicle",
+    description: "450 cc ATV — more power, comfort, and better handling.",
     priceCents: 1500,
     unit: "vehicle",
     upgradeGroup: "vehicle",
@@ -45,8 +45,8 @@ const defaultExtras = [
   },
   {
     id: "exclusive-upgrade",
-    title: "Exclusive Upgrade – 650 cc V2 with Electric Steering",
-    description: "Top-tier quad for maximum performance and adventure.",
+    title: "Exclusive Vehicle",
+    description: "650 cc V2 with electric power steering — top-tier quad for maximum performance.",
     priceCents: 2500,
     unit: "vehicle",
     upgradeGroup: "vehicle",
@@ -54,7 +54,7 @@ const defaultExtras = [
   },
   {
     id: "camera-pack",
-    title: "Action Camera Pack – Capture Your Adventure",
+    title: "Action Camera Pack",
     description: "DJI Osmo4 action camera with SD card, 3 batteries, selfie-stick, and mounts.",
     priceCents: 2000,
     unit: "camera",
