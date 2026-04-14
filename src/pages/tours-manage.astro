@@ -188,9 +188,12 @@ import Layout from '../layouts/Layout.astro';
           <!-- Extras / Add-ons -->
           <div>
             <label class="block text-sm font-semibold text-gray-700 mb-1">Extras / Add-ons</label>
-            <p class="text-xs text-gray-500 mb-2">Offered on the checkout extras page. Price is in cents (e.g. 1500 = €15.00). Unit determines how quantity scales: person = × all participants; adult = × adults only; vehicle = × quads; camera = × cameras.</p>
+            <p class="text-xs text-gray-500 mb-2">Offered on the checkout extras page. Price is in cents (e.g. 1500 = €15.00). Unit determines how quantity scales: person/camera = simple counter; adult = × adults only (kids-free supported); vehicle = per quad (use upgradeGroup "vehicle" to show in the per-quad picker).</p>
             <div id="extras-list" class="space-y-2"></div>
-            <button type="button" id="add-extra-btn" class="mt-2 text-sm text-orange-500 hover:text-orange-600 cursor-pointer">+ Add extra</button>
+            <div class="flex gap-4 mt-2">
+              <button type="button" id="add-extra-btn" class="text-sm text-orange-500 hover:text-orange-600 cursor-pointer">+ Add extra</button>
+              <button type="button" id="load-default-extras-btn" class="text-sm text-gray-500 hover:text-orange-600 cursor-pointer">Load default extras</button>
+            </div>
           </div>
 
 
@@ -533,6 +536,25 @@ import Layout from '../layouts/Layout.astro';
   });
   document.getElementById("add-image-btn")!.addEventListener("click", () => addImageRow());
   document.getElementById("add-extra-btn")!.addEventListener("click", () => addExtraRow());
+
+  const DEFAULT_EXTRAS = [
+    { id: "lunch", title: "Taste of Crete – Local Meal Experience", description: "Traditional Cretan meal (main dish, salad, bread & drink) at a local tavern after the ride.", priceCents: 1500, unit: "person", active: true },
+    { id: "monastery", title: "Kera Monastery Entry Ticket", description: "Entry to Kera Monastery. Kids under 12 are free.", priceCents: 200, unit: "adult", kidsFree: true, active: true },
+    { id: "premium-upgrade", title: "Premium Upgrade – 450 cc ATV", description: "Upgrade for more power, comfort, and better handling.", priceCents: 1500, unit: "vehicle", upgradeGroup: "vehicle", active: true },
+    { id: "exclusive-upgrade", title: "Exclusive Upgrade – 650 cc V2 with Electric Steering", description: "Top-tier quad for maximum performance and adventure.", priceCents: 2500, unit: "vehicle", upgradeGroup: "vehicle", active: true },
+    { id: "camera-pack", title: "Action Camera Pack – Capture Your Adventure", description: "DJI Osmo4 action camera with SD card, 3 batteries, selfie-stick, and mounts.", priceCents: 2000, unit: "camera", active: true },
+  ];
+
+  document.getElementById("load-default-extras-btn")!.addEventListener("click", () => {
+    const list = document.getElementById("extras-list")!;
+    const existingIds = new Set(
+      Array.from(list.querySelectorAll<HTMLInputElement>(".extra-id")).map((el) => el.value.trim()).filter(Boolean)
+    );
+    DEFAULT_EXTRAS.forEach((ex) => {
+      if (existingIds.has(ex.id)) return;
+      addExtraRow(ex);
+    });
+  });
 
   // Form submit
   tourForm.addEventListener("submit", async (e) => {
